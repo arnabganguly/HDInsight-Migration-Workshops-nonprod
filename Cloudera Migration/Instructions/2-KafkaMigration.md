@@ -16,7 +16,7 @@ The existing Kafka workload receives incoming data about airports, flights, dela
 ---
 
 **NOTE:**
-In the *live* Cloudera system, the consumer is a Spark application running in a separate cluster, but for the purposes of this exercise, you'll run a Scala application that simply retrieves and displays the messages from the Kafka topics. Additionally, in this exercise, the Kafka producer simulates receiving data by reading it from a CSV file.
+In the *live* Cloudera system the consumer is a Spark application, but for the purposes of this exercise, you'll run a Scala application that simply retrieves and displays the messages from the Kafka topics. Additionally, in this exercise, the Kafka producer simulates receiving data by reading it from a CSV file.
 
 ---
 
