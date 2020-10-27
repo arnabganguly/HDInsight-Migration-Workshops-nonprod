@@ -2,7 +2,7 @@
 $subscriptionId = 'b581336d-00a0-41f6-bacd-a4f6b8779001'
 
 #Provide the name of your resource group
-$resourceGroupName ='clouderarg'
+$resourceGroupName ='workshoprg'
 
 #Provide the name of the snapshot that will be used to create OS disk
 $snapshotName = 'clouderasnapshot'
@@ -11,7 +11,7 @@ $snapshotName = 'clouderasnapshot'
 $osDiskName = 'clouderadisk'
 
 #Provide the name of a virtual network and subnet where virtual machine will be created
-$virtualNetworkName = 'clouderavmvnet2'
+$virtualNetworkName = 'clouderavmvnet'
 $subnetName = 'clouderasubnet'
 
 #VNet prefix for the VM
