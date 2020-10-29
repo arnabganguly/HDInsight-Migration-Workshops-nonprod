@@ -25,3 +25,230 @@ You will migrate from the Cloudera cluster to four HDInsight clusters, utilizing
 The HBase cluster utilizes its own storage account. The rationale behind this approach is that while Azure Data Lake Gen 2 storage gives the best performance for Hive, Spark, and Kafka clusters, HBase works best with Azure Blob storage.
 
 **Note:** Due to time constraints, in this workshop you will not deploy the clusters using the Enterprise Security Package. In a production system, you must always ensure that your clusters run in a safe and secure environment.
+
+# Setup
+
+Before starting the workshop, set up the Contoso environment containing the apps and services that you will migrate to HDInsight. To save costs in this workshop, the Contoso environment consists of a single node cluster. This cluster runs Cloudera 5.16.2 and Kafka 3.1, to simulate a legacy system.
+
+Perform the following tasks:
+
+1. Sign in to the Azure portal using a web browser.
+
+1. On the **Home** page, click **Subscriptions**.
+    ![The **Home** page in the Azure portal. The user has selected **Subscriptions**.](../Images/1-PortalHome.png)
+
+1. Make a note of the **Subscription ID** associated with your account.
+
+    ![The **Subscriptions** page in the Azure portal. The user's subscription is highlighted.](../Images/1-Subscriptions.png)
+
+1. In the toolbar, click **Cloud Shell**.
+
+    ![The toolbar page in the Azure portal. The user has selected **Cloud Shell**.](../Images/1-CloudShell.png)
+
+1. In the Cloud Shell dropdown list, select **PowerShell**. Click **Confirm** if prompted.
+
+    ![The Cloud Shell dropdown. The user has selected **PowerShell**.](../Images/1-PowerShell.png)
+
+1. Run the following commands to set up the parameters and configuration settings for the Contoso virtual machine and its associated resources. Replace *\<your-subscription-id\*> with the subscription ID you noted previously. You should also change the *location* variable to match your nearest Azure region.
+
+    ```PowerShell
+    #Provide the subscription Id
+    $subscriptionId = '<your-subscription-id>'
+
+    #Provide the name of your resource group
+    $resourceGroupName ='workshoprg'
+    
+    #Specify the location for creating resources
+    $location = "East US"
+
+    #Provide the name of the snapshot that will be used to create OS disk
+    $snapshotName = 'clouderasnapshot' # TBD - THIS WILL HAVE TO BE STORED SOMEWHERE ACCESSIBLE TO STUDENTS
+
+    #Provide the name of the OS disk that will be created using the snapshot
+    $osDiskName = 'clouderadisk'
+
+    #Provide the name of a virtual network and subnet where virtual machine will be created
+    $virtualNetworkName = 'clouderavmvnet'
+    $subnetName = 'clouderasubnet'
+
+    #VNet prefix for the VM
+    $vnetprefix = '10.10.0.0'
+
+    #Network security group name for the VNet
+    $nsgName = 'clouderansg'
+
+    #Provide the name of the virtual machine
+    $virtualMachineName = 'clouderavm'
+
+    #Provide the size of the virtual machine
+    $virtualMachineSize = 'Standard_D8s_v4'
+    ```
+1. Create the resource group that will hold the virtual machine and resources:
+
+    ```PowerShell
+    #Set the context to the subscription Id where the resources will be created
+    Select-AzSubscription -SubscriptionId $SubscriptionId
+
+    #Create the resource group
+    New-AzResourceGroup -Name $resourceGroupName -Location $location
+    ```
+
+1. Create and configure a virtual network for the virtual machine
+
+    ```PowerShell
+    #Create a virtual network for the VM
+    $virtualNetwork = New-AzVirtualNetwork `
+        -ResourceGroupName $resourceGroupName `
+        -Location $location 
+        -Name $virtualNetworkName 
+        -AddressPrefix $vnetprefix/16
+
+    #Create a network security group for the VNet 
+    # and add rules to allow ports required to access Cloudera
+    $nsg = New-AzNetworkSecurityGroup -Name $nsgName `
+        -ResourceGroupName $resourceGroupName `
+        -Location $location
+    
+    $nsg | Add-AzNetworkSecurityRuleConfig -Name 'SSHRule' `
+        -Access Allow `
+        -Protocol Tcp `
+        -Direction Inbound `
+        -Priority 100 `
+        -SourceAddressPrefix Internet `
+        -SourcePortRange * `
+        -DestinationAddressPrefix * `
+        -DestinationPortRange 22 | Set-AzNetworkSecurityGroup
+
+    $nsg | Add-AzNetworkSecurityRuleConfig -Name 'ClouderaManager' `
+        -Access Allow `
+        -Protocol Tcp `
+        -Direction Inbound `
+        -Priority 350 `
+        -SourceAddressPrefix Internet `
+        -SourcePortRange * `
+        -DestinationAddressPrefix * `
+        -DestinationPortRange 7180 | Set-AzNetworkSecurityGroup
+
+    $nsg | Add-AzNetworkSecurityRuleConfig -Name 'SCM' `
+        -Access Allow `
+        -Protocol Tcp `
+        -Direction Inbound `
+        -Priority 360 `
+        -SourceAddressPrefix Internet `
+        -SourcePortRange * `
+        -DestinationAddressPrefix * `
+        -DestinationPortRange 7182 | Set-AzNetworkSecurityGroup
+
+    $nsg | Add-AzNetworkSecurityRuleConfig `
+        -Name 'KafkaBroker' `
+        -Access Allow `
+        -Protocol Tcp `
+        -Direction Inbound `
+        -Priority 370 `
+        -SourceAddressPrefix Internet `
+        -SourcePortRange * `
+        -DestinationAddressPrefix * `
+        -DestinationPortRange 9092 | Set-AzNetworkSecurityGroup
+
+    $nsg | Add-AzNetworkSecurityRuleConfig -Name 'Zookeeper' `
+        -Access Allow `
+        -Protocol Tcp `
+        -Direction Inbound `
+        -Priority 380 `
+        -SourceAddressPrefix Internet `
+        -SourcePortRange * `
+        -DestinationAddressPrefix * `
+        -DestinationPortRange 2181 | Set-AzNetworkSecurityGroup
+
+    $nsg | Add-AzNetworkSecurityRuleConfig -Name 'Port8080' `
+        -Access Allow `
+        -Protocol Tcp `
+        -Direction Inbound -Priority 390 -SourceAddressPrefix Internet -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 8080 | Set-AzNetworkSecurityGroup
+
+    #Create a subnet for the VM, and associate the NSG with the subnet
+    $subnetConfig = Add-AzVirtualNetworkSubnetConfig `
+        -Name $subnetName `
+        -AddressPrefix $vnetprefix/24 `
+        -VirtualNetwork $virtualNetwork `
+        -NetworkSecurityGroup $nsg
+
+    $virtualNetwork | Set-AzVirtualNetwork
+    ```
+
+1. Retrieve the snapshot from which you will create the virtual machine and create a disk:
+
+    NOTE THIS WILL NEED TO CHANGE
+
+    ```PowerShell
+    #Retrieve details of the snapshot
+    $snapshot = Get-AzSnapshot -ResourceGroupName `
+        $resourceGroupName -SnapshotName $snapshotName
+
+     #Create the VM disk from the snapshot
+    $diskConfig = New-AzDiskConfig -Location $location `
+        -SourceResourceId $snapshot.Id `
+        -CreateOption Copy
+
+    $disk = New-AzDisk -Disk $diskConfig `
+        -ResourceGroupName $resourceGroupName `
+        -DiskName $osDiskName
+    ```
+
+1. Create the virtual machine using the disk and network resources your just configured:
+
+    ```PowerShell
+    #Initialize virtual machine configuration
+    $VirtualMachine = New-AzVMConfig -VMName $virtualMachineName `
+        -VMSize $virtualMachineSize
+
+    #Use the Managed Disk Resource Id to attach it 
+    # to the virtual machine configuration
+    $VirtualMachine = Set-AzVMOSDisk -VM $VirtualMachine `
+    -ManagedDiskId $disk.Id `
+    -CreateOption Attach -Linux
+
+    #Create a public IP for the VM
+    $publicIp = New-AzPublicIpAddress -Name ($VirtualMachineName.ToLower()+'_ip') `
+        -ResourceGroupName $resourceGroupName `
+        -Location $location `
+        -AllocationMethod Dynamic
+
+    #Get the virtual network where virtual machine will be hosted
+    $vnet = Get-AzVirtualNetwork -Name $virtualNetworkName `
+        -ResourceGroupName $resourceGroupName
+
+    # Create NIC for the first subnet of the virtual network
+    $nic = New-AzNetworkInterface -Name ($VirtualMachineName.ToLower()+'_nic') `
+        -ResourceGroupName $resourceGroupName `
+        -Location $location `
+        -SubnetId $vnet.Subnets[0].Id -PublicIpAddressId $publicIp.Id
+
+    # Add the NIC to the virtual machine configuration
+    $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine `
+        -Id $nic.Id
+
+    #Create the virtual machine with Managed Disk
+    New-AzVM -VM $VirtualMachine `
+        -ResourceGroupName $resourceGroupName `
+        -Location $location
+    ```
+
+1. When the virtual machine has been created, find the public IP address.
+
+    ```PowerShell
+    TBD
+    ```
+
+1. Connect using SSH. The username is **azureuser**, and the password is **Pa55w.rdDemo**. Replace *\<ip_address`>* with the IP address of the virtual machine.
+
+    ```PowerShell
+    ssh azureuser@<ip_address>
+    ```
+
+1. START CLOUDERA SERVICES, CONNECT TO CLOUDERA MANAGER USING A WEB BROWSER, AND START SPARK, KAFKA, HIVE, HDFS, HBASE, ETC
+
+
+
+
+
+

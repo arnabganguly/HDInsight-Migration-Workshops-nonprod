@@ -1,0 +1,81 @@
+// Scala
+
+// Addresses of Kafka bootstrap servers for the cluster
+val kafkaBootstrapServers = "host1:port1,host2:port2"
+
+// Name of the topic containing incoming data
+val topic = "kafka_topic"
+
+// Connect to the stream of data arriving from Kafka
+val incomingStream = spark
+  .readStream
+  .format("kafka")
+  .option("kafka.bootstrap.servers", kafkaBootstrapServers)
+  .option("subscribe", topic)
+  .load()
+
+//incomingStream.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
+//  .as[(String, String)]
+
+// Display the schema of incoming messages
+incomingStream.printSchema
+
+// Send the incoming stream into the console.
+// Data comes in batches! incomingStream.writeStream
+  .outputMode("append")
+  .format("console")
+  .option("truncate", false)
+  .start()
+  .awaitTermination()
+
+
+
+
+
+yarn application -list
+
+for x in $(yarn application -list -appStates ACCEPTED | awk 'NR > 2 { print $1 }'); do yarn application -kill $x; done
+
+spark-shell --master yarn-client --driver-memory 512m --executor-memory 512m
+
+jdbc:postgresql://onprem.internal.cloudapp.net:7432/hive
+
+java -cp EventProducer.jar eventproducer.eventdriver --sourcefilename "yellow_tripdata_2015-01.csv" --bootstrap-servers "onprem:9092" --topic taxi --partitions 1
+
+java -cp Consumer.jar eventconsumer.eventreceiver --bootstrap-servers "onprem:9092" --topic taxi --group-id reader-group --consumers 1
+
+java -cp KafkaConsumer.jar eventconsumer.ConsumerExample
+java -cp KakfaConsumer.jar kafkaclient.Consumer
+
+kafka-console-consumer --bootstrap-server onprem:9092 --topic taxi --partition 0 --offset earliest
+
+spark-submit
+
+zookeeper.connect=onprem.internal.cloudapp.net:2181
+
+listeners=PLAINTEXT://onprem.internal.cloudapp.net:9092
+advertised.listeners=PLAINTEXT://onprem.internal.cloudapp.net:9092
+
+PATH=$PATH:/usr/lib/jvm/java-8-oracle-cloudera/bin
+/usr/lib/jvm/java-8-oracle-cloudera/bin/java
+
+Pwd: /run/cloudera-scm-agent/process/243-kafka-KAFKA_BROKER
+CONF_DIR: /var/run/cloudera-scm-agent/process/243-kafka-KAFKA_BROKER
+KAFKA_HOME: /opt/cloudera/parcels/CDH-6.3.2-1.cdh6.3.2.p0.1605554/lib/kafka
+
+"Must configure at least one partition assigner class name to partition.assignment.strategy configuration property"
+
+spark-submit --class SimpleApp --master "local[*]" target/scala-2.12/simple-project_2.12-1.0.jar
+
+java -cp EventProducer.jar eventdriver --bootstrap-servers onprem:9092 --sourcefilename 2000.csv --topic flights --partitions 1
+java -cp Consumer.jar eventconsumer --bootstrap-servers onprem:9092 --topic flights --partition 0
+
+kafka-topics --create --zookeeper onprem:2181 --replication-factor 1 --partitions 1 --topic flights
+
+kafka-topics --list --zookeeper onprem:2181
+
+kafka-mirror-maker --producer.config source-cluster.properties --consumer.config dest-cluster.properties --whitelist flights
+
+/usr/hdp/4.1.1.2/kafka/bin/kafka-topics.sh --list --zookeeper onprem.bx.interal.cloudapp.net:2181
+
+/usr/hdp/4.1.1.2/kafka/bin/kafka-mirror-maker.sh --producer.config source-cluster.properties --consumer.config dest-cluster.properties --whitelist flights

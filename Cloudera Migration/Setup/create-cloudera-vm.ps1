@@ -4,6 +4,9 @@ $subscriptionId = 'b581336d-00a0-41f6-bacd-a4f6b8779001'
 #Provide the name of your resource group
 $resourceGroupName ='workshoprg'
 
+#Specify the location for creating resources
+$location = "East US"
+
 #Provide the name of the snapshot that will be used to create OS disk
 $snapshotName = 'clouderasnapshot'
 
@@ -27,13 +30,13 @@ $virtualMachineName = 'clouderavm'
 #e.g. Standard_DS3
 #Get all the vm sizes in a region using below script:
 #e.g. Get-AzVMSize -Location westus
-$virtualMachineSize = 'Standard_D8s_v3'
-
-#Sign in to Azure
-Connect-AzAccount
+$virtualMachineSize = 'Standard_D8s_v4'
 
 #Set the context to the subscription Id where Managed Disk will be created
 Select-AzSubscription -SubscriptionId $SubscriptionId
+
+#Create the resource group
+New-AzResourceGroup -Name $resourceGroupName -Location $location
 
 #Retrieve details of the snapshot
 $snapshot = Get-AzSnapshot -ResourceGroupName $resourceGroupName -SnapshotName $snapshotName

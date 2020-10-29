@@ -68,11 +68,11 @@ On ClouderaVM:
 
 edit /etc/hosts and add IP addresses (10.x.x.x) of wnX-kafkac nodes
 
-create source-cluster.properties file:
+create dest-cluster.properties file:
 
   bootstrap.servers=wn0-kafkac:9092,wn1-kafkac:9092,wn2-kafkac:9092
 
-create dest-cluster.properties file:
+create source-cluster.properties file:
 
   bootstrap.servers=onprem:9092
   group.id=mirror-group
@@ -81,6 +81,9 @@ java -cp EventProducer.jar eventdriver --bootstrap-servers onprem:9092 --sourcef
 java -cp Consumer.jar eventconsumer --bootstrap-servers onprem:9092 --topic flights --partition 0 (just for a few seconds, to verify producer is running)
 
 kafka-mirror-maker --producer.config source-cluster.properties --consumer.config dest-cluster.properties --whitelist flights &
+
+
+kafka-mirror-maker --producer.config source --consumer.config dest 
 
 On kafkacluster VM:
 -------------------
@@ -93,5 +96,5 @@ edit /etc/hosts and add IP address for onprem VM (Cloudera)
 
 /usr/hdp/4.1.1.2/kafka/bin/kafka-topics.sh --list --zookeeper zk0-kafkac:2181 - verify that localflights is visible
 
-/usr/hdp/4.1.1.2/kafka/bin/kafka-console-consumer.sh --bootstrap-server wn0-kafkac:2181 --topic flights
+/usr/hdp/4.1.1.2/kafka/bin/kafka-console-consumer.sh --bootstrap-server wn0-kafkac:9092 --topic flights
 

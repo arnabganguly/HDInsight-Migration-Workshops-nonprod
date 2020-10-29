@@ -1,99 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="Consumer:jar" />
+    </artifacts-to-build>
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="89ab89d5-57c4-430f-bd73-cc0c20d2f517" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_kafka_kafka_clients_1_0_1_cdh6_0_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_xerial_snappy_snappy_java_1_1_4.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/sbt.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ClientArgumentKeys.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/eventconsumer.scala" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Producer/.idea/artifacts/EventProducer_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Producer/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Producer/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_9_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_9_4.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_9_4.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_jaxrs_jackson_jaxrs_base_2_9_4.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_jaxrs_jackson_jaxrs_json_provider_2_9_4.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_module_jackson_module_jaxb_annotations_2_9_4.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_thoughtworks_paranamer_paranamer_2_8.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_annotation_javax_annotation_api_1_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_servlet_javax_servlet_api_3_1_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_validation_validation_api_1_1_0_Final.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_ws_rs_javax_ws_rs_api_2_0_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__log4j_log4j_1_2_17.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_sourceforge_argparse4j_argparse4j_0_7_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_kafka_kafka_clients_1_1_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_kafka_kafka_log4j_appender_1_1_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_kafka_kafka_tools_1_1_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_continuation_9_2_24_v20180105.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_http_9_2_24_v20180105.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_io_9_2_24_v20180105.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_security_9_2_24_v20180105.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_server_9_2_24_v20180105.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_servlet_9_2_24_v20180105.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_servlets_9_2_24_v20180105.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_util_9_2_24_v20180105.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_external_aopalliance_repackaged_2_5_0_b32.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_external_javax_inject_2_5_0_b32.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_hk2_api_2_5_0_b32.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_hk2_locator_2_5_0_b32.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_hk2_utils_2_5_0_b32.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_osgi_resource_locator_1_0_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_bundles_repackaged_jersey_guava_2_25_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_containers_jersey_container_servlet_2_25_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_containers_jersey_container_servlet_core_2_25_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_core_jersey_client_2_25_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_core_jersey_common_2_25_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_core_jersey_server_2_25_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_media_jersey_media_jaxb_2_25_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_javassist_javassist_3_20_0_GA.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_json4s_json4s_ast_2_13_3_6_9.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_json4s_json4s_core_2_13_3_6_9.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_json4s_json4s_jackson_2_13_3_6_9.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_json4s_json4s_native_2_13_3_6_9.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_json4s_json4s_scalap_2_13_3_6_9.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_scala_lang_scala_library_2_13_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_log4j12_1_7_25.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_xerial_snappy_snappy_java_1_1_7_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/org_apache_kafka_kafka_clients_0_10_0_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Consumer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Consumer.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Consumer/eventconsumer/ClientArgumentKeys$.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Consumer/eventconsumer/ClientArgumentKeys.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Consumer/eventconsumer/ClientArgumentParser$.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Consumer/eventconsumer/ClientArgumentParser.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Consumer/eventconsumer/eventreceiver$.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Consumer/eventconsumer/eventreceiver.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Consumer/eventconsumer/threadconsumer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/eventconsumer/ClientArgumentKeys.scala" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/eventconsumer/eventreceiver.scala" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/eventconsumer/threadconsumer.scala" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/eventconsumer/ClientArgumentKeys$.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/eventconsumer/ClientArgumentKeys.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/eventconsumer/ClientArgumentParser$.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/eventconsumer/ClientArgumentParser.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/eventconsumer/eventreceiver$.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/eventconsumer/eventreceiver.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/eventconsumer/threadconsumer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Producer/src/main/java/eventproducer/ClientArgumentKeys.scala" beforeDir="false" afterPath="$PROJECT_DIR$/../Producer/src/main/java/ClientArgumentKeys.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Producer/src/main/java/eventproducer/eventdriver.scala" beforeDir="false" afterPath="$PROJECT_DIR$/../Producer/src/main/java/eventdriver.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Producer/src/main/java/eventproducer/partitioner.scala" beforeDir="false" afterPath="$PROJECT_DIR$/../Producer/src/main/java/partitioner.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Producer/target/classes/eventproducer/ClientArgumentKeys$.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Producer/target/classes/eventproducer/ClientArgumentKeys.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Producer/target/classes/eventproducer/ClientArgumentParser$.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Producer/target/classes/eventproducer/ClientArgumentParser.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Producer/target/classes/eventproducer/eventdriver$.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Producer/target/classes/eventproducer/eventdriver$sendercallback$.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Producer/target/classes/eventproducer/eventdriver.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Producer/target/classes/eventproducer/partitioner.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Instructions/2-KafkaMigration.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Instructions/2-KafkaMigration.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Instructions/Steps.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Instructions/Steps.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -172,38 +90,38 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="1176" y="391" key="#com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603727801947" />
-    <state width="1718" height="416" key="GridCell.Tab.0.bottom" timestamp="1603729066295">
+    <state width="1718" height="416" key="GridCell.Tab.0.bottom" timestamp="1603815562620">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1718" height="416" key="GridCell.Tab.0.bottom/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603729066295" />
-    <state width="1718" height="416" key="GridCell.Tab.0.center" timestamp="1603729066295">
+    <state width="1718" height="416" key="GridCell.Tab.0.bottom/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562620" />
+    <state width="1718" height="416" key="GridCell.Tab.0.center" timestamp="1603815562620">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1718" height="416" key="GridCell.Tab.0.center/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603729066295" />
-    <state width="1718" height="416" key="GridCell.Tab.0.left" timestamp="1603729066295">
+    <state width="1718" height="416" key="GridCell.Tab.0.center/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562620" />
+    <state width="1718" height="416" key="GridCell.Tab.0.left" timestamp="1603815562620">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1718" height="416" key="GridCell.Tab.0.left/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603729066295" />
-    <state width="1718" height="416" key="GridCell.Tab.0.right" timestamp="1603729066295">
+    <state width="1718" height="416" key="GridCell.Tab.0.left/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562620" />
+    <state width="1718" height="416" key="GridCell.Tab.0.right" timestamp="1603815562620">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1718" height="416" key="GridCell.Tab.0.right/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603729066295" />
-    <state width="1718" height="416" key="GridCell.Tab.1.bottom" timestamp="1603729066297">
+    <state width="1718" height="416" key="GridCell.Tab.0.right/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562620" />
+    <state width="1718" height="416" key="GridCell.Tab.1.bottom" timestamp="1603815562621">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1718" height="416" key="GridCell.Tab.1.bottom/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603729066297" />
-    <state width="1718" height="416" key="GridCell.Tab.1.center" timestamp="1603729066296">
+    <state width="1718" height="416" key="GridCell.Tab.1.bottom/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562621" />
+    <state width="1718" height="416" key="GridCell.Tab.1.center" timestamp="1603815562620">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1718" height="416" key="GridCell.Tab.1.center/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603729066296" />
-    <state width="1718" height="416" key="GridCell.Tab.1.left" timestamp="1603729066295">
+    <state width="1718" height="416" key="GridCell.Tab.1.center/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562620" />
+    <state width="1718" height="416" key="GridCell.Tab.1.left" timestamp="1603815562620">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1718" height="416" key="GridCell.Tab.1.left/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603729066295" />
-    <state width="1718" height="416" key="GridCell.Tab.1.right" timestamp="1603729066297">
+    <state width="1718" height="416" key="GridCell.Tab.1.left/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562620" />
+    <state width="1718" height="416" key="GridCell.Tab.1.right" timestamp="1603815562620">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1718" height="416" key="GridCell.Tab.1.right/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603729066297" />
+    <state width="1718" height="416" key="GridCell.Tab.1.right/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562620" />
     <state x="935" y="276" key="SettingsEditor" timestamp="1603729147342">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
