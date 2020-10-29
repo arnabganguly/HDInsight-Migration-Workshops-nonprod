@@ -1,3 +1,3 @@
-# HDInsight-Migration-Workshops
+# HDInsight Migration Workshops
 
 BRIEF DESCRIPTION AND INSTRUCTIONS TO BE ADDED HERE
