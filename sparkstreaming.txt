@@ -76,6 +76,12 @@ kafka-topics --list --zookeeper onprem:2181
 
 kafka-mirror-maker --producer.config source-cluster.properties --consumer.config dest-cluster.properties --whitelist flights
 
-/usr/hdp/4.1.1.2/kafka/bin/kafka-topics.sh --list --zookeeper onprem.bx.interal.cloudapp.net:2181
 
-/usr/hdp/4.1.1.2/kafka/bin/kafka-mirror-maker.sh --producer.config source-cluster.properties --consumer.config dest-cluster.properties --whitelist flights
+
+kafka-topics --create --topic flights --zookeeper onprem.internal.cloudapp.net:2181 --partitions 1 --replication-factor 1
+
+/usr/hdp/4.1.1.2/kafka/bin/kafka-topics.sh --create --topic flights --zookeeper zk0-contos:2181 --partitions 1 --replication-factor 1
+
+/usr/hdp/4.1.1.2/kafka/bin/kafka-topics.sh --list --zookeeper onprem.internal.cloudapp.net:2181
+
+/usr/hdp/4.1.1.2/kafka/bin/kafka-mirror-maker.sh --producer.config producer.properties --consumer.config consumer.properties --whitelist flights

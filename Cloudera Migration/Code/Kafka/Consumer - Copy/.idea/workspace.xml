@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="Consumer:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="89ab89d5-57c4-430f-bd73-cc0c20d2f517" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../../../Instructions/1-Introduction.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Instructions/1-Introduction.md" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.2\plugins\maven\lib\maven3" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
+  </component>
+  <component name="ProjectId" id="1jQDn5B6IJIm0uGnHE1kiSeK7G0" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+  </component>
+  <component name="RunManager">
+    <configuration name="eventconsumer" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="eventconsumer" />
+      <module name="Consumer" />
+      <option name="PROGRAM_PARAMETERS" value="--bootstrap-servers &quot;52.188.110.3:9092&quot; --topic flights --partition 0" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.eventconsumer" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="89ab89d5-57c4-430f-bd73-cc0c20d2f517" name="Default Changelist" comment="" />
+      <created>1603727589401</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1603727589401</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1185" y="457" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog" timestamp="1603728969785">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1185" y="457" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603728969785" />
+    <state x="909" y="357" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1603728918380">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="909" y="357" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603728918380" />
+    <state x="1184" y="492" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1603729136026">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1184" y="492" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603729136026" />
+    <state x="1176" y="391" key="#com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog" timestamp="1603727801947">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1176" y="391" key="#com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603727801947" />
+    <state width="1718" height="416" key="GridCell.Tab.0.bottom" timestamp="1603815562620">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1718" height="416" key="GridCell.Tab.0.bottom/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562620" />
+    <state width="1718" height="416" key="GridCell.Tab.0.center" timestamp="1603815562620">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1718" height="416" key="GridCell.Tab.0.center/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562620" />
+    <state width="1718" height="416" key="GridCell.Tab.0.left" timestamp="1603815562620">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1718" height="416" key="GridCell.Tab.0.left/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562620" />
+    <state width="1718" height="416" key="GridCell.Tab.0.right" timestamp="1603815562620">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1718" height="416" key="GridCell.Tab.0.right/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562620" />
+    <state width="1718" height="416" key="GridCell.Tab.1.bottom" timestamp="1603815562621">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1718" height="416" key="GridCell.Tab.1.bottom/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562621" />
+    <state width="1718" height="416" key="GridCell.Tab.1.center" timestamp="1603815562620">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1718" height="416" key="GridCell.Tab.1.center/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562620" />
+    <state width="1718" height="416" key="GridCell.Tab.1.left" timestamp="1603815562620">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1718" height="416" key="GridCell.Tab.1.left/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562620" />
+    <state width="1718" height="416" key="GridCell.Tab.1.right" timestamp="1603815562620">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1718" height="416" key="GridCell.Tab.1.right/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562620" />
+    <state x="935" y="276" key="SettingsEditor" timestamp="1603729147342">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="935" y="276" key="SettingsEditor/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603729147342" />
+  </component>
+</project>

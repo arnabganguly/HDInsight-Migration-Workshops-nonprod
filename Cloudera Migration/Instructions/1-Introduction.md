@@ -35,6 +35,7 @@ Perform the following tasks:
 1. Sign in to the Azure portal using a web browser.
 
 1. On the **Home** page, click **Subscriptions**.
+
     ![The **Home** page in the Azure portal. The user has selected **Subscriptions**.](../Images/1-PortalHome.png)
 
 1. Make a note of the **Subscription ID** associated with your account.
@@ -56,13 +57,17 @@ Perform the following tasks:
     $subscriptionId = '<your-subscription-id>'
 
     #Provide the name of your resource group
-    $resourceGroupName ='workshoprg'
+    $resourceGroupName = 'workshoprg'
+
+    #Provide the name of the resource group holding the snapshot on which the VM is based
+    $snapshotResourceGroupName = 'clouderarg'
     
     #Specify the location for creating resources
     $location = "East US"
 
+    # TBD - THIS WILL HAVE TO BE STORED SOMEWHERE ACCESSIBLE TO STUDENTS
     #Provide the name of the snapshot that will be used to create OS disk
-    $snapshotName = 'clouderasnapshot' # TBD - THIS WILL HAVE TO BE STORED SOMEWHERE ACCESSIBLE TO STUDENTS
+    #$diskName = 'clouderasnapshot' 
 
     #Provide the name of the OS disk that will be created using the snapshot
     $osDiskName = 'clouderadisk'
@@ -99,17 +104,19 @@ Perform the following tasks:
     #Create a virtual network for the VM
     $virtualNetwork = New-AzVirtualNetwork `
         -ResourceGroupName $resourceGroupName `
-        -Location $location 
-        -Name $virtualNetworkName 
+        -Location $location `
+        -Name $virtualNetworkName `
         -AddressPrefix $vnetprefix/16
 
     #Create a network security group for the VNet 
     # and add rules to allow ports required to access Cloudera
-    $nsg = New-AzNetworkSecurityGroup -Name $nsgName `
+    $nsg = New-AzNetworkSecurityGroup `
+        -Name $nsgName `
         -ResourceGroupName $resourceGroupName `
         -Location $location
     
-    $nsg | Add-AzNetworkSecurityRuleConfig -Name 'SSHRule' `
+    $nsg | Add-AzNetworkSecurityRuleConfig `
+        -Name 'SSHRule' `
         -Access Allow `
         -Protocol Tcp `
         -Direction Inbound `
@@ -119,7 +126,8 @@ Perform the following tasks:
         -DestinationAddressPrefix * `
         -DestinationPortRange 22 | Set-AzNetworkSecurityGroup
 
-    $nsg | Add-AzNetworkSecurityRuleConfig -Name 'ClouderaManager' `
+    $nsg | Add-AzNetworkSecurityRuleConfig `
+        -Name 'ClouderaManager' `
         -Access Allow `
         -Protocol Tcp `
         -Direction Inbound `
@@ -129,7 +137,8 @@ Perform the following tasks:
         -DestinationAddressPrefix * `
         -DestinationPortRange 7180 | Set-AzNetworkSecurityGroup
 
-    $nsg | Add-AzNetworkSecurityRuleConfig -Name 'SCM' `
+    $nsg | Add-AzNetworkSecurityRuleConfig `
+        -Name 'SCM' `
         -Access Allow `
         -Protocol Tcp `
         -Direction Inbound `
@@ -150,7 +159,8 @@ Perform the following tasks:
         -DestinationAddressPrefix * `
         -DestinationPortRange 9092 | Set-AzNetworkSecurityGroup
 
-    $nsg | Add-AzNetworkSecurityRuleConfig -Name 'Zookeeper' `
+    $nsg | Add-AzNetworkSecurityRuleConfig `
+        -Name 'Zookeeper' `
         -Access Allow `
         -Protocol Tcp `
         -Direction Inbound `
@@ -160,7 +170,8 @@ Perform the following tasks:
         -DestinationAddressPrefix * `
         -DestinationPortRange 2181 | Set-AzNetworkSecurityGroup
 
-    $nsg | Add-AzNetworkSecurityRuleConfig -Name 'Port8080' `
+    $nsg | Add-AzNetworkSecurityRuleConfig `
+        -Name 'Port8080' `
         -Access Allow `
         -Protocol Tcp `
         -Direction Inbound -Priority 390 -SourceAddressPrefix Internet -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 8080 | Set-AzNetworkSecurityGroup
@@ -175,14 +186,26 @@ Perform the following tasks:
     $virtualNetwork | Set-AzVirtualNetwork
     ```
 
+1. Create a storage account for holding boot diagnostics for the virtual machine
+
+    ```PowerShell
+    #Create a Gen1 storage account
+    $storageAccount = New-AzStorageAccount `
+        -AccountName ($VirtualMachineName.ToLower()+'storage') `
+        -ResourceGroupName $resourceGroupName `
+        -Location $location `
+        -Kind Storage `
+        -SkuName Standard_GRS 
+    ```
+
 1. Retrieve the snapshot from which you will create the virtual machine and create a disk:
 
-    NOTE THIS WILL NEED TO CHANGE
+    CUT THIS ITEM. REPLACE WITH CODE THAT COPIES CLOUDERA DISK FROM SOURCE
 
     ```PowerShell
     #Retrieve details of the snapshot
-    $snapshot = Get-AzSnapshot -ResourceGroupName `
-        $resourceGroupName -SnapshotName $snapshotName
+    $snapshot = Get-AzSnapshot -ResourceGroupName $snapshotResourceGroupName `
+        -SnapshotName $snapshotName
 
      #Create the VM disk from the snapshot
     $diskConfig = New-AzDiskConfig -Location $location `
@@ -190,6 +213,13 @@ Perform the following tasks:
         -CreateOption Copy
 
     $disk = New-AzDisk -Disk $diskConfig `
+        -ResourceGroupName $resourceGroupName `
+        -DiskName $osDiskName
+
+
+    THIS NEXT STATEMENT IS OK
+
+    $disk = Get-AzDisk `
         -ResourceGroupName $resourceGroupName `
         -DiskName $osDiskName
     ```
@@ -203,32 +233,45 @@ Perform the following tasks:
 
     #Use the Managed Disk Resource Id to attach it 
     # to the virtual machine configuration
-    $VirtualMachine = Set-AzVMOSDisk -VM $VirtualMachine `
-    -ManagedDiskId $disk.Id `
-    -CreateOption Attach -Linux
+    $VirtualMachine = Set-AzVMOSDisk `
+       -VM $VirtualMachine `
+        -ManagedDiskId $disk.Id `
+        -CreateOption Attach -Linux
 
     #Create a public IP for the VM
-    $publicIp = New-AzPublicIpAddress -Name ($VirtualMachineName.ToLower()+'_ip') `
+    $publicIp = New-AzPublicIpAddress `
+        -Name ($VirtualMachineName.ToLower()+'_ip') `
         -ResourceGroupName $resourceGroupName `
         -Location $location `
         -AllocationMethod Dynamic
 
     #Get the virtual network where virtual machine will be hosted
-    $vnet = Get-AzVirtualNetwork -Name $virtualNetworkName `
+    $vnet = Get-AzVirtualNetwork `
+        -Name $virtualNetworkName `
         -ResourceGroupName $resourceGroupName
 
     # Create NIC for the first subnet of the virtual network
-    $nic = New-AzNetworkInterface -Name ($VirtualMachineName.ToLower()+'_nic') `
+    $nic = New-AzNetworkInterface `
+        -Name ($VirtualMachineName.ToLower()+'_nic') `
         -ResourceGroupName $resourceGroupName `
         -Location $location `
         -SubnetId $vnet.Subnets[0].Id -PublicIpAddressId $publicIp.Id
 
     # Add the NIC to the virtual machine configuration
-    $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine `
+    $VirtualMachine = Add-AzVMNetworkInterface `
+        -VM $VirtualMachine `
         -Id $nic.Id
+    
+    #Set the boot diagnostics storage account for the VM
+    Set-AzVMBootDiagnostic `
+        -VM $VirtualMachine `
+        -Enable `
+        -ResourceGroupName $resourceGroupName `
+        -StorageAccountName $storageAccount.StorageAccountName
 
-    #Create the virtual machine with Managed Disk
-    New-AzVM -VM $VirtualMachine `
+    #Create the virtual machine
+    New-AzVM `
+        -VM $VirtualMachine `
         -ResourceGroupName $resourceGroupName `
         -Location $location
     ```
@@ -236,16 +279,58 @@ Perform the following tasks:
 1. When the virtual machine has been created, find the public IP address.
 
     ```PowerShell
-    TBD
+    $ipAddr = (Get-AzPublicIpAddress `
+        -Name ($VirtualMachineName.ToLower()+'_ip') `
+        -ResourceGroupName $resourceGroupName).IpAddress
+
+    echo $ipAddr
     ```
 
-1. Connect using SSH. The username is **azureuser**, and the password is **Pa55w.rdDemo**. Replace *\<ip_address`>* with the IP address of the virtual machine.
+1. Connect using SSH. The username is **azureuser**, and the password is **Pa55w.rdDemo**. Replace *\<ip_address`>* with the IP address of the virtual machine. Enter **yes** when prompted to connect.
 
     ```PowerShell
-    ssh azureuser@<ip_address>
+    ssh azureuser@$ipAddr
     ```
 
-1. START CLOUDERA SERVICES, CONNECT TO CLOUDERA MANAGER USING A WEB BROWSER, AND START SPARK, KAFKA, HIVE, HDFS, HBASE, ETC
+1. At the *bash* prompt, run the following commands to start the Cloudera Agent and Cloudera Server.
+
+    ```bash
+    sudo service cloudera-scm-agent restart
+    sudo service cloudera-scm-server restart
+    ```
+
+1. On the desktop, open a Web browser, and navigate to the URL <ip-address>:7180, where *\<ip-address\>* is the IP address of the virtual machine. You should see the Cloudera Manager login page.
+
+    ---
+
+    **NOTE:** You may need to wait for a minute or two while the Cloudera Manager is initialized.
+    
+    ---
+    
+    ![The Cloudera Manager login page in the web browser.](../Images/1-Cloudera-Login.png)
+
+1. Log in with the username **Admin** with password **Admin**.
+
+1. In the Cloudera Manager, select the drop-down menu for the **Cloudera Management Service**, select **Start**, and wait for the management service to start up correctly.
+
+    ![The Cloudera Management Service menu. The user has selected **Start**.](../Images/1-Start-Cloudera-Manager.png)
+
+1. Select the drop-down menu for the **Cluster 1** cluster, and wait for the various services (Zookeeper, HDFS, Kafka, HBase, Yarn, Spark, and Hive) to start.
+
+    ![The Cluster menu. The user has selected **Start**.](../Images/1-Start-Cloudera-Services.png)
+
+1. Verify that all services are shown as running correctly.
+
+    ---
+
+    **NOTE:** You may receive a warning from HDFS initially, but it should clear after a minute or so.
+
+    ---
+
+    ![The Cluster Manager. All services have started successfully.](../Images/1-Cloudera-Services-Running.png)
+
+
+
 
 
 

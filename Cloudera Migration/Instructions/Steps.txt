@@ -63,6 +63,8 @@ Connect to the cluster using Ambari to confirm it is running correctly
 
 Use Hosts page to make a note of the address of the wn0-kafkac, wn1-kafkac, and wn2-kafkac nodes (Kafka broker nodes)
 
+Set min.insync.replicas parameter for Kafka to 1 and restart Kafka
+
 On ClouderaVM:
 --------------
 
@@ -83,12 +85,12 @@ java -cp Consumer.jar eventconsumer --bootstrap-servers onprem:9092 --topic flig
 kafka-mirror-maker --producer.config source-cluster.properties --consumer.config dest-cluster.properties --whitelist flights &
 
 
-kafka-mirror-maker --producer.config source --consumer.config dest 
+kafka-mirror-maker --producer.config source-cluster.properties --consumer.config dest-cluster.properties 
 
 On kafkacluster VM:
 -------------------
 
-edit /etc/hosts and add IP address for onprem VM (Cloudera)
+on each worker node (wn0, wn1, wn2) and the gateway node, edit /etc/hosts and add IP address for onprem VM (Cloudera)
 
 /usr/hdp/4.1.1.2/kafka/bin/kafka-topics.sh --list --zookeeper onprem:2181 - verify that remote flights is visible
 

@@ -2,7 +2,7 @@
 $subscriptionId = 'b581336d-00a0-41f6-bacd-a4f6b8779001'
 
 #Provide the name of your resource group
-$resourceGroupName ='workshoprg'
+$resourceGroupName ='workshoprg2'
 
 #Specify the location for creating resources
 $location = "East US"
