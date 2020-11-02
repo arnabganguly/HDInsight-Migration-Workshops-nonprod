@@ -329,6 +329,8 @@ Perform the following tasks:
 
     ![The Cluster Manager. All services have started successfully.](../Images/1-Cloudera-Services-Running.png)
 
+1. In the Azure portal, close the PowerShell pane.
+
 
 
 
