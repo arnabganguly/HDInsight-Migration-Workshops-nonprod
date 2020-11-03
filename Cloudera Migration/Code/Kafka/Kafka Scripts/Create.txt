@@ -1,1 +1,0 @@
-./kafka-topics.sh --create --topic flights --partitions 10 --replication-factor 1 --zookeeper "lon-dev-02:2181,lon-dev-03:2181"

@@ -22,7 +22,7 @@ In the *live* Cloudera system the consumer is a Spark application, but for the p
 
 ![The structure of the existing Kafka system running on Cloudera](../Images/2-KafkaSystem.png)
 
-1. On your desktop, open a **Command Prompt** window and sign in to the Cloudera virtual machine. The username is **azureuser**, and the password is **Pa55w.rdDemo**. Replace *\<ip_address`>* with the IP address of the virtual machine.
+1. On your desktop, open a **Command Prompt** window and sign in to the Cloudera virtual machine. The username is **azureuser***. Replace *\<ip_address`>* with the IP address of the virtual machine.
 
     ```PowerShell
     ssh azureuser@<ip address>
@@ -660,6 +660,14 @@ In this task, you'll update the producer application to post messages to topics 
 
 ## Task 6: Tidy up
 
+---
+
+**NOTE:** It's important to delete the cluster to avoid running up Azure charges for a cluster you no longer require. You will be charged for the cluster all the time it is active, even if you aren't using it.
+
+Deleting the cluster doesn't delete the storage account or network resources. You can reuse these items for other clusters.
+
+---
+
 1. In SSH session running the **EventProducer** application, press CTRL-C to stop the application, and then run the following command to close the connection to the head node.
 
     ```bash
@@ -667,3 +675,13 @@ In this task, you'll update the producer application to post messages to topics 
     ```
 
 1. In SSH session running the **Consumer** application, press CTRL-C to stop the application, and then close the connection to the head node.
+
+1. In the Azure portal, go to the page for the HDInsight Kafka cluster.
+
+1. In the command bar, select **Delete**:
+
+    ![The **kafkacluster*9999*** page in the Azure portal. The user is deleting the cluster](../Images/2-Delete-Cluster.png)
+
+1. In the confirmation pane, enter the name of the cluster, and then select **Delete**.
+
+    ![The confirm cluster delete pane.](../Images/2-Delete-Confirm.png)

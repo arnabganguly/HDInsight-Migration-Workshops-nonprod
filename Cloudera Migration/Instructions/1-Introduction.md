@@ -60,19 +60,19 @@ Perform the following tasks:
     $resourceGroupName = 'workshoprg'
 
     #Provide the name of the resource group holding the snapshot on which the VM is based
-    $snapshotResourceGroupName = 'clouderarg'
+    $diskResourceGroupName = 'clouderarg'
     
     #Specify the location for creating resources
     $location = "East US"
 
     # TBD - THIS WILL HAVE TO BE STORED SOMEWHERE ACCESSIBLE TO STUDENTS
-    #Provide the name of the snapshot that will be used to create OS disk
-    #$diskName = 'clouderasnapshot' 
+    $sourceDiskName = 'clouderadiskBeforeKafka'
 
     #Provide the name of the OS disk that will be created using the snapshot
     $osDiskName = 'clouderadisk'
 
-    #Provide the name of a virtual network and subnet where virtual machine will be created
+    #Provide the name of a virtual network and subnet 
+    # where virtual machine will be created
     $virtualNetworkName = 'clouderavmvnet'
     $subnetName = 'clouderasubnet'
 
@@ -198,27 +198,45 @@ Perform the following tasks:
         -SkuName Standard_GRS 
     ```
 
-1. Retrieve the snapshot from which you will create the virtual machine and create a disk:
-
-    CUT THIS ITEM. REPLACE WITH CODE THAT COPIES CLOUDERA DISK FROM SOURCE
+1. Create a disk containing the image for the virtual machine:
 
     ```PowerShell
-    #Retrieve details of the snapshot
-    $snapshot = Get-AzSnapshot -ResourceGroupName $snapshotResourceGroupName `
-        -SnapshotName $snapshotName
+    #Get the details of the disk containing the image for the virtual machine
+    $sourceDisk = Get-AzDisk `
+        -ResourceGroupName $diskResourceGroupName `
+        -DiskName $sourceDiskName
 
-     #Create the VM disk from the snapshot
-    $diskConfig = New-AzDiskConfig -Location $location `
-        -SourceResourceId $snapshot.Id `
-        -CreateOption Copy
+    #Create a new disk for the virtual machine.
+    #The disk must be big enough to hold the image
+    $targetDiskConfig = New-AzDiskConfig `
+        -SkuName 'Standard_LRS' `
+        -osType 'Linux' `
+        -UploadSizeInBytes $($sourceDisk.DiskSizeBytes+512) `
+        -Location $Location `
+        -CreateOption 'Upload'
 
-    $disk = New-AzDisk -Disk $diskConfig `
-        -ResourceGroupName $resourceGroupName `
+    $targetDisk = New-AzDisk -ResourceGroupName $resourceGroupName `
+        -DiskName $osDiskName `
+        -Disk $targetDiskConfig
+
+    #Copy the image from the source disk to the new disk
+    $sourceDiskSas = Grant-AzDiskAccess -ResourceGroupName $diskResourceGroupName `
+        -DiskName $sourceDiskName `
+        -DurationInSecond 86400 -Access 'Read'
+
+    $targetDiskSas = Grant-AzDiskAccess -ResourceGroupName $resourceGroupName `
+        -DiskName $osDiskName `
+        -DurationInSecond 86400 -Access 'Write'
+
+    azcopy copy $sourceDiskSas.AccessSAS $targetDiskSas.AccessSAS `
+        --blob-type PageBlob
+
+    Revoke-AzDiskAccess -ResourceGroupName $diskResourceGroupName `
+        -DiskName $sourceDiskName
+
+    Revoke-AzDiskAccess -ResourceGroupName $resourceGroupName `
         -DiskName $osDiskName
-
-
-    THIS NEXT STATEMENT IS OK
-
+   
     $disk = Get-AzDisk `
         -ResourceGroupName $resourceGroupName `
         -DiskName $osDiskName
@@ -276,7 +294,7 @@ Perform the following tasks:
         -Location $location
     ```
 
-1. When the virtual machine has been created, find the public IP address.
+1. When the virtual machine has been created, find the public IP address. Make a note of the IP address because you will need it later.
 
     ```PowerShell
     $ipAddr = (Get-AzPublicIpAddress `
@@ -286,20 +304,50 @@ Perform the following tasks:
     echo $ipAddr
     ```
 
-1. Connect using SSH. The username is **azureuser**, and the password is **Pa55w.rdDemo**. Replace *\<ip_address`>* with the IP address of the virtual machine. Enter **yes** when prompted to connect.
+1. Connect using SSH as the **root** user. The password is **Pa55w.rdDemo**. Enter **yes** when prompted to connect.
+
+    ```PowerShell
+    ssh root@$ipAddr
+    ```
+
+1. At the *bash* prompt, run the following commands to set the password for the **azureuser** account. Provide a password of your own choosing. You'll use this account rather than root for running the Cloudera services.
+
+    ```bash
+    passwd azureuser
+    ```
+
+1. Run the following command to sign out from the virtual machine and return to the PowerShell prompt:
+
+    ```bash
+    exit
+    ```
+
+1. Connect using SSH as the **azureuser** user.
 
     ```PowerShell
     ssh azureuser@$ipAddr
     ```
 
-1. At the *bash* prompt, run the following commands to start the Cloudera Agent and Cloudera Server.
+1. At the *bash* prompt, run command shown below to set the correct hostname for the virtual machine. You may be prompted by the **sudo** command for a password; enter the password you set up for the **azureuser** account.
+
+    ---
+
+    **NOTE:** This step is necessary because the Cloudera installation is preconfigured with this hostname. If you leave it set at the default value generated by Azure, the Cloudera services will fail with DNS lookup errors.
+
+    ---
+    
+    ```bash
+    sudo hostname onprem.internal.cloudapp.net
+    ```
+
+1. Run the following commands to start the Cloudera Agent and Cloudera Server. You may be prompted by the **sudo** command for a password; enter the password you set up for the **azureuser** account.
 
     ```bash
     sudo service cloudera-scm-agent restart
     sudo service cloudera-scm-server restart
     ```
 
-1. On the desktop, open a Web browser, and navigate to the URL <ip-address>:7180, where *\<ip-address\>* is the IP address of the virtual machine. You should see the Cloudera Manager login page.
+1. On the desktop, open a Web browser, and navigate to the URL <ip-address>:7180, where *\<ip-address\>* is the IP address of the virtual machine you noted earlier. You should see the Cloudera Manager login page.
 
     ---
 
@@ -309,7 +357,7 @@ Perform the following tasks:
     
     ![The Cloudera Manager login page in the web browser.](../Images/1-Cloudera-Login.png)
 
-1. Log in with the username **Admin** with password **Admin**.
+1. Log in with the username **admin** with password **admin**.
 
 1. In the Cloudera Manager, select the drop-down menu for the **Cloudera Management Service**, select **Start**, and wait for the management service to start up correctly.
 
