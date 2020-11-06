@@ -70,15 +70,15 @@ object eventdriver {
           (("timestamp" -> System.currentTimeMillis) ~
            ("dateinfo" ->
             (("year" -> data(1)) ~ ("month" -> data(2)) ~ ("dayofmonth" -> data(3)) ~ ("dayofweek" -> data(4)) ~
-             ("deptime" -> data(1)) ~ ("crsdeptime" -> data(1)) ~ ("arrtime" -> data(1)) ~ ("crsarrtime" -> data(1)))) ~
+             ("deptime" -> data(5)) ~ ("crsdeptime" -> data(6)) ~ ("arrtime" -> data(7)) ~ ("crsarrtime" -> data(8)))) ~
            ("flightinfo" ->
-            (("carrier" -> data(1)) ~ ("flightnum" -> data(1)) ~ ("tailnum" -> data(1)) ~ ("elapsedtime" -> data(1)) ~
-             ("crselapsedtime" -> data(1)) ~ ("airtime" -> data(1)) ~ ("arrdelay" -> data(1)) ~
-             ("depdelay" -> data(1)) ~ ("origin" -> data(1)) ~ ("dest" -> data(1)) ~ ("distance" -> data(1)))) ~
+            (("carrier" -> data(9)) ~ ("flightnum" -> data(10)) ~ ("tailnum" -> data(11)) ~ ("elapsedtime" -> data(12)) ~
+             ("crselapsedtime" -> data(13)) ~ ("airtime" -> data(14)) ~ ("arrdelay" -> data(15)) ~
+             ("depdelay" -> data(16)) ~ ("origin" -> data(17)) ~ ("dest" -> data(18)) ~ ("distance" -> data(19)))) ~
            ("delayinfo" ->
-            (("taxiin" -> data(1)) ~ ("taxiout" -> data(1)) ~ ("cancelled" -> data(1)) ~ ("cancellationcode" -> data(1)) ~
-             ("diverted" -> data(1)) ~ ("carrierdelay" -> data(1)) ~ ("weatherdelay" -> data(1)) ~ ("nasdelay" -> data(1)) ~
-             ("securitydelay" -> data(1)) ~ ("lateaircraftdelay" -> data(1)))))
+            (("taxiin" -> data(20)) ~ ("taxiout" -> data(21)) ~ ("cancelled" -> data(22)) ~ ("cancellationcode" -> data(23)) ~
+             ("diverted" -> data(24)) ~ ("carrierdelay" -> data(25)) ~ ("weatherdelay" -> data(26)) ~ ("nasdelay" -> data(27)) ~
+             ("securitydelay" -> data(28)) ~ ("lateaircraftdelay" -> data(29)))))
 
       val jsonPayload = compact(render(eventPayload))
       return jsonPayload

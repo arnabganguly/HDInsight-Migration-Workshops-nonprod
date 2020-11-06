@@ -1,0 +1,45 @@
+spark2-submit \
+  --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.1.0 \
+  --class SparkConsumer \
+  --master yarn \
+  --total-executor-cores 2 \
+  --executor-memory 512m \
+  SparkConsumer.jar \
+    --application testapp \
+    --bootstrap onprem:9092 \
+    --topic flights
+
+export SPARK_KAFKA_VERSION=0.10
+
+
+root
+ |-- key: binary (nullable = true)
+ |-- value: binary (nullable = true)
+ |-- topic: string (nullable = true)
+ |-- partition: integer (nullable = true)
+ |-- offset: long (nullable = true)
+ |-- timestamp: timestamp (nullable = true)
+ |-- timestampType: integer (nullable = true)
+
+CREATE TABLE IF NOT EXISTS flightinfo ( 
+    timestamp string,
+    year string,
+    month string,
+    dayofmonth string,
+    deptime string,
+    arrtime string,
+    carrier string,
+    flightnum string,
+    elapsedtime int,
+    origin string,
+    dest string,
+    distance int)
+COMMENT 'Flight information'
+CLUSTERED BY (flightnum) INTO 10 BUCKETS
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t'
+STORED AS ORC
+TBLPROPERTIES('transactional'='true');
+
+In Beeline
+!connect jdbc:hive2://

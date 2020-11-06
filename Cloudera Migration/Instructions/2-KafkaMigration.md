@@ -1,4 +1,5 @@
 # Exercise 1 - Introduction
+
 In this exercise, you'll migrate a Kafka workload from Cloudera to HDInsight. You'll perform the following tasks:
 
 - Examine the existing Kafka workload running on Cloudera, including the Kafka producer and consumer applications.

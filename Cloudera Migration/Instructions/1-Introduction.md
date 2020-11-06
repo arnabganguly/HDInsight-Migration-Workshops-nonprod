@@ -3,9 +3,9 @@
 In this workshop, you'll learn how to:
 
 - Migrate a Kafka workload from Cloudera to an HDInsight 4.0 Kafka cluster.
-- Migrate a Spark workload from Cloudera to an HDInsight 4.0 Spark cluster.
 - Migrate a Hive workload and data from Cloudera to an HDInsight 4.0 LLAP cluster.
 - Migrate HBase data from Cloudera to an HDInsight 4.0 HBase cluster.
+- Migrate a Spark workload from Cloudera to an HDInsight 4.0 Spark cluster.
 
 
 This workshop follows the techniques and strategies described in the document **Migrate your Big Data Workloads to HDInsight**.
@@ -66,7 +66,7 @@ Perform the following tasks:
     $location = "East US"
 
     # TBD - THIS WILL HAVE TO BE STORED SOMEWHERE ACCESSIBLE TO STUDENTS
-    $sourceDiskName = 'clouderadiskBeforeKafka'
+    $sourceDiskName = 'clouderadisk'
 
     #Provide the name of the OS disk that will be created using the snapshot
     $osDiskName = 'clouderadisk'
@@ -306,6 +306,12 @@ Perform the following tasks:
 
 1. Connect using SSH as the **root** user. The password is **Pa55w.rdDemo**. Enter **yes** when prompted to connect.
 
+    ---
+
+    **NOTE:** You may need to wait for a couple of minutes while the virtual machine services start before continuing
+
+    ---
+
     ```PowerShell
     ssh root@$ipAddr
     ```
@@ -351,7 +357,8 @@ Perform the following tasks:
 
     ---
 
-    **NOTE:** You may need to wait for a minute or two while the Cloudera Manager is initialized.
+    **NOTE:** 
+    You may need to wait for a minute or two while the Cloudera Manager is initialized.
     
     ---
     
@@ -371,7 +378,8 @@ Perform the following tasks:
 
     ---
 
-    **NOTE:** You may receive a warning from HDFS initially, but it should clear after a minute or so.
+    **NOTE:** 
+    You may receive a warning from HDFS and/or Zookeeper initially, but they should clear after a minute or so.
 
     ---
 
