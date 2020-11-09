@@ -1,4 +1,4 @@
-# Exercise 1 Migrate a Hive workload to HDInsight
+# Exercise 2: Migrate a Hive workload to HDInsight
 
 ## Introduction
 
