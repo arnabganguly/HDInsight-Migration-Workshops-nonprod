@@ -12,7 +12,7 @@ Additionally, an HDInsight cluster comprises a number of virtual machines. You m
 
 ---
 
-Before starting this lab, [read the introduction and perform the setup steps](Cloudera%20Migration/Instructions/Introduction.md).
+Before starting this lab, [read the introduction and perform the setup steps](Cloudera%20Migration/Instructions/0-Introduction.md).
 
 This lab contains four exercises showing how to:
 
