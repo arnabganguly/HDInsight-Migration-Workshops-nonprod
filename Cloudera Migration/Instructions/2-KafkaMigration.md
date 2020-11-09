@@ -51,7 +51,6 @@ In the *live* Cloudera system the consumer is a Spark application, but for the p
 
     1. **Consumer.jar**, which subscribes to the **flights** topic and displays the contents of the messages it reads.
 
-
 1. Start the Producer app:
 
     ```bash
@@ -112,7 +111,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
     ![The Resource Groups icon on the Home page in the Azure portal](../Images/2-Home-Page.png)
 
-1. On the **Create a resource group** page,  select the same subscription and region that you used to create the Cloudera virtual machine. Name the resource group **kafkaclusterrg**, and then select **Review + create**.
+1. On the **Create a resource group** page,  select the same subscription and region that you used to create the Cloudera virtual machine. Name the resource group **clusterrg**, and then select **Review + create**.
 
 1. On the validation page, select **Create**, and wait while the resource group is created.
 
@@ -129,9 +128,9 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     | Field | Value|
     |-|-|
     | Subscription | Select your subscription |
-    | Resource group | kafkaclusterrg |
+    | Resource group | clusterrg |
     | Name | clustervnet |
-    | Region | Select the same region used by the Cloudera virtual machine and the **kafkaclusterrg** resource group |
+    | Region | Select the same region used by the Cloudera virtual machine and the **clusterrg** resource group |
 
 
 1. On the **IP Addresses** tab, enter the following settings, and then select **Review + create**:
@@ -159,9 +158,9 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     | Field | Value|
     |-|-|
     | Subscription | Select your subscription |
-    | Resource group | kafkaclusterrg |
+    | Resource group | clusterrg |
     | Storage account name | clusterstorage*nnnn*, where *nnnn* is a random four digit number you select to avoid clashing with other storage accounts |
-    | Location | Select the same region used by the Cloudera virtual machine and the **kafkaclusterrg** resource group |
+    | Location | Select the same region used by the Cloudera virtual machine and the **clusterrg** resource group |
     | Performance | Standard |
     | Account Kind | StorageV2 (general purpose v2) |
     | Replication | |one-redundant storage (ZRS) |
@@ -187,8 +186,8 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     | Field | Value|
     |-|-|
     | Subscription | Select your subscription |
-    | Resource group | kafkaclusterrg |
-    | Region | Select the same region used by the Cloudera virtual machine and the **kafkaclusterrg** resource group |
+    | Resource group | clusterrg |
+    | Region | Select the same region used by the Cloudera virtual machine and the **clusterrg** resource group |
     | Name | clustermanagedid |
 
 1. On the validation page, select **Create**, and wait while the user assigned managed identity is created.
@@ -230,9 +229,9 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     | Field | Value|
     |-|-|
     | Subscription | Select your subscription |
-    | Resource group | kafkaclusterrg |
+    | Resource group | clusterrg |
     | Cluster name | kafkacluster*nnnn*, where *nnnn* is the same random four digit number you selected when you created the storage account (if necessary, you can use a different number, but for consistency try and reuse the same value if possible) |
-    | Region | Select the same region used by the Cloudera virtual machine and the **kafkaclusterrg** resource group |
+    | Region | Select the same region used by the Cloudera virtual machine and the **clusterrg** resource group |
     | Cluster type | Kafka |
     | Version | Kafka 2.1.1 (HDI 4.0) |
     | Cluster login name | admin |
@@ -259,7 +258,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     |-|-|
     | Enable enterprise security package | Leave unchecked |
     | Minimum TLS version | 1.2 |
-    | Virtual network | clustervnet/kafkaclusterrg |
+    | Virtual network | clustervnet/clusterrg |
     
     Leave all remaining settings on this tab with their default values.
 
@@ -454,6 +453,13 @@ In this task, you'll configure peering between the virtual network containing th
 1. Disconnect from the wn0-kafkac node, and return to the head node of the cluster.
 
 1. Repeat the previous three steps for the two remaining worker nodes, **wn1-kafkac** and **wn2-kafkac**.
+
+    ---
+
+    **NOTE:**
+    Under some circumstances, the worker nodes might not be named sequentially. For example, you might that they are named **wn3-kafkac** and **wn4-kafkac**. Check the entries in the **/etc/hosts** file of the head node for the names of these nodes.
+
+    ---
 
 ### Configure MirrorMaker
 

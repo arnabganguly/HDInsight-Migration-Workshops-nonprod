@@ -2,7 +2,7 @@
 
 In this exercise, you'll migrate a Spark workload from Cloudera to HDInsight. You'll perform the following tasks:
 
-TBD
+**TBD**
 
 - Examine the existing Kafka workload running on Cloudera, including the Kafka producer and consumer applications.
 - Create the virtual infrastructure for an HDInsight Kafka cluster, and then create the cluster.

@@ -189,9 +189,10 @@ Perform the following tasks:
 1. Create a storage account for holding boot diagnostics for the virtual machine
 
     ```PowerShell
-    #Create a Gen1 storage account
+    #Create a Gen1 storage account with a unique name
+    [string]$rnd = Get-Random -Maximum 10000
     $storageAccount = New-AzStorageAccount `
-        -AccountName ($VirtualMachineName.ToLower()+'storage') `
+        -AccountName ($VirtualMachineName.ToLower() + 'storage' + $rnd) `
         -ResourceGroupName $resourceGroupName `
         -Location $location `
         -Kind Storage `
@@ -201,6 +202,7 @@ Perform the following tasks:
 1. Create a disk containing the image for the virtual machine:
 
     ```PowerShell
+    #NOTE: THIS MAY NEED TO CHANGE, DEPENDING ON WHERE THE SOURCE DISK IS HOSTED
     #Get the details of the disk containing the image for the virtual machine
     $sourceDisk = Get-AzDisk `
         -ResourceGroupName $diskResourceGroupName `
@@ -358,7 +360,7 @@ Perform the following tasks:
     ---
 
     **NOTE:** 
-    You may need to wait for a minute or two while the Cloudera Manager is initialized.
+    Again. you may need to wait for a minute or two while the Cloudera Manager is initialized.
     
     ---
     

@@ -5,7 +5,7 @@ spark2-submit \
   --total-executor-cores 2 \
   --executor-memory 512m \
   SparkConsumer.jar \
-    --application testapp \
+    --application flightsapp \
     --bootstrap onprem:9092 \
     --topic flights
 
