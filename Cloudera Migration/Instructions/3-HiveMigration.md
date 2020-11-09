@@ -1,4 +1,6 @@
-# Exercise 2 - Introduction
+# Exercise 1 Migrate a Hive workload to HDInsight
+
+## Introduction
 
 In this exercise, you'll migrate an active Hive database from Cloudera to HDInsight. You'll perform the following tasks:
 
