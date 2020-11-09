@@ -1,4 +1,4 @@
-# Exercise 4 - Migrate a Spark workload to HDInisght
+# Exercise 4: Migrate a Spark workload to HDInisght
 
 ## Introduction
 
