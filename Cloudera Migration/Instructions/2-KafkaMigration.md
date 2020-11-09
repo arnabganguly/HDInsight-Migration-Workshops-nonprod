@@ -1,4 +1,4 @@
-# Exercise 1 Migrate a Kafka workload to HDInsight
+# Exercise 1: Migrate a Kafka workload to HDInsight
 
 ## Introduction
 
