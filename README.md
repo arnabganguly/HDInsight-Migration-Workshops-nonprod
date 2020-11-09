@@ -1,4 +1,6 @@
-# HDInsight Migration Workshops
+# HDInsight Migration Workshop
+
+In this lab, you'll learn how to migrate some common workloads running on a Cloudera cluster to HDInsight 4.0.
 
 ---
 
@@ -14,10 +16,10 @@ Before starting this lab, [read the introduction and perform the setup steps](Cl
 
 This lab contains four exercises showing how to:
 
-1. [Migrate a Cloudera Kafka workload to an Azure HDInsight Kafka cluster by using Kafka Mirroring](Cloudera%20Migration/Instructions/2-KafkaMigration.md),
+1. [Migrate a Cloudera Kafka workload to an Azure HDInsight Kafka cluster by using Kafka Mirroring](Cloudera%20Migration/Instructions/1-KafkaMigration.md),
 
-1. [Migrate a Cloudera Hive workload to an Azure HDInsight LLAP cluster by using Hive replication](Cloudera%20Migration/Instructions/3-HIveMigration.md),
+1. [Migrate a Cloudera Hive workload to an Azure HDInsight LLAP cluster by using Hive replication](Cloudera%20Migration/Instructions/2-HiveMigration.md),
 
-1. [Migrate a Cloudera HBase database to an Azure HDInsight HBase cluster by using HBase snapshots](Cloudera%20Migration/Instructions/2-HBaseMigration.md), and
+1. [Migrate a Cloudera HBase database to an Azure HDInsight HBase cluster by using HBase snapshots](Cloudera%20Migration/Instructions/3-HBaseMigration.md), and
 
-1. [Migrate a Cloudera Spark workload to an Azure HDInsight Spark cluster, using HDFS tools and AzCopy to transfer data](Cloudera%20Migration/Instructions/2-SparkMigration.md). 
+1. [Migrate a Cloudera Spark workload to an Azure HDInsight Spark cluster, using HDFS tools and AzCopy to transfer data](Cloudera%20Migration/Instructions/4-SparkMigration.md). 
