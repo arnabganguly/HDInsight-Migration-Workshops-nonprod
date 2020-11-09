@@ -1,4 +1,6 @@
-# Exercise 4 - Introduction
+# Exercise 4 - Migrate a Spark workload to HDInisght
+
+## Introduction
 
 In this exercise, you'll migrate a Spark workload from Cloudera to HDInsight. You'll perform the following tasks:
 
