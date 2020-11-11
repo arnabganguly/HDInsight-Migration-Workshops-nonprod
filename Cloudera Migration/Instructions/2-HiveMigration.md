@@ -7,7 +7,7 @@ In this exercise, you'll migrate an active Hive database from Cloudera to HDInsi
 - Examine the workload and database currently running on Cloudera.
 - Create the virtual infrastructure for an HDInsight Hive LLAP cluster, and then create the cluster.
 - Use Hive export and import commands, and the DistCp utility, to transfer data from the Cloudera cluster to HDInsight.
-- Verify that the data is being replicated correctly.
+- Verify that the data has been transferred correctly.
 
 ---
 
@@ -21,9 +21,9 @@ At the end of this process, the Hive database will have been relocated to the HD
 
 ## Task 1: Run the existing workload
 
-In the existing on-premises system, a Spark application acts as a receiver for messages arriving on a Kafka topic. The Spark application posts selected parts of this data to a Hive database for analysis. In this exercise, you'll replicate the Cloudera Hive database to an HDInsight cluster.
+In the existing on-premises system, a Spark application acts as a receiver for messages arriving on a Kafka topic. The Spark application posts selected parts of this data to a Hive database for analysis. In this exercise, you'll copy the Cloudera Hive database to an HDInsight cluster.
 
-The first task is to examine the existing system
+The first task is to examine the existing system.
 
 ![The structure of the existing Kafka/Spark/Hive system running on Cloudera](../Images/3-HiveSystem.png)
 
@@ -34,7 +34,7 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
 
 ---
 
-1. On your desktop, open a **Command Prompt** window and sign in to the Cloudera virtual machine. The username is **azureuser***. Replace *\<ip_address`>* with the IP address of the virtual machine.
+1. If you haven't already done so, on your desktop, open a **Command Prompt** window and sign in to the Cloudera virtual machine. The username is **azureuser***. Replace *\<ip_address`>* with the IP address of the virtual machine.
 
     ```PowerShell
     ssh azureuser@<ip address>
@@ -263,7 +263,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
     ![The **Firewall settings** page in the Azure portal. The user has opened the firewall to Azure services and resources](../Images/3-SetFirewall.png)
     
-### Create the cluster
+### Create the LLAP cluster
 
 1. On the Azure Home page, select **Create a resource**.
 
@@ -451,7 +451,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
     ---
 
-### Replicate data from the Cloudera cluster to the HDInsight LLAP cluster
+## Task 3: Copy data from the Cloudera cluster to the HDInsight LLAP cluster
 
 1.  In the Azure portal, open a Cloud Shell prompt running PowerShell.
 
@@ -571,6 +571,8 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     exit;
     ```
 
+## Task 4: Verify that the transfer was successful
+
 1. Restart **beeline** as the **azureuser** user:
 
     ```bash
@@ -629,7 +631,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
     ---
 
-## Task 6: Tidy up
+## Task 5: Tidy up
 
 1. In the Azure portal, go to the page for the HDInsight LLAP cluster.
 

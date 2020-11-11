@@ -151,7 +151,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
 1. On the Azure Home page, select **Create a resource**.
 
-1. On the **New** page, in the **Search the Marketplace** box, type **virtual network**, and then select **Storage account** from the list that appears.
+1. On the **New** page, in the **Search the Marketplace** box, type **storage account**, and then select **Storage account** from the list that appears.
 
 1. On the **Storage account** page, select **Create**.
 
@@ -165,7 +165,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     | Location | Select the same region used by the Cloudera virtual machine and the **clusterrg** resource group |
     | Performance | Standard |
     | Account Kind | StorageV2 (general purpose v2) |
-    | Replication | |one-redundant storage (ZRS) |
+    | Replication | Zone-redundant storage (ZRS) |
 
 1. On the **Networking** tab, accept the default settings, and then select **Next: Data protection**.
 
@@ -194,7 +194,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
 1. On the validation page, select **Create**, and wait while the user assigned managed identity is created.
 
-1. On the Home page in the Azure portal, under Recent resources, select **clusterstorage*9999***.
+1. On the Home page in the Azure portal, under **Recent resources**, select **clusterstorage*9999***.
 
 1. On the **clusterstorage*9999*** page select **Access Control (IAM)**:
 
@@ -214,7 +214,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     | Subscription | Select your subscription |
     | Select | clustermanagedid |
 
-1. Wait while the role is assigned, and the click **Role assignments* to verify that it has been assigned successfully:
+1. Wait while the role is assigned, and then click **Role assignments* to verify that it has been assigned successfully:
 
     ![The **Role assignments** page in the Azure portal. The **clustermanagedid** identity has been assigned the **Storage BlobData Owner** role in the storage account](../Images/2-Verify-Role-Assignment.png)
 
