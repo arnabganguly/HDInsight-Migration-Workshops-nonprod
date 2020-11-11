@@ -270,7 +270,9 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
     ---
 
-    **NOTE:** This operation may take 15 or 20 minutes to complete
+    **NOTE:** 
+    
+    This operation may take 15 or 20 minutes to complete
 
     ---
 
@@ -331,7 +333,9 @@ In this task, you'll configure peering between the virtual network containing th
 
     ---
 
-    **NOTE:** This change is necessary due to the reduced number of nodes in the Cloudera cluster.
+    **NOTE:** 
+    
+    This change is necessary due to the reduced number of nodes in the Cloudera cluster.
 
     ---
 
@@ -359,7 +363,9 @@ In this task, you'll configure peering between the virtual network containing th
 
     ---
 
-    **NOTE:** Use a text editor of your choice. Editors available for Ubuntu include **vi** and **nano**. The **vi** editor is intended for experienced users, but **nano** is more straightforward to use.
+    **NOTE:** 
+    
+    Use a text editor of your choice. Editors available for Ubuntu include **vi** and **nano**. The **vi** editor is intended for experienced users, but **nano** is more straightforward to use.
 
     ---
 
@@ -500,7 +506,9 @@ In this task, you'll configure peering between the virtual network containing th
 
     ---
 
-    **NOTE:** zk0-kafkac is the name of one of the Zookeeper nodes in the kafka cluster. The /etc/hosts file should already contain an entry for this node.
+    **NOTE:** 
+    
+    zk0-kafkac is the name of one of the Zookeeper nodes in the kafka cluster. The /etc/hosts file should already contain an entry for this node.
 
     ---
 
@@ -671,7 +679,7 @@ In this task, you'll update the producer application to post messages to topics 
 
 ---
 
-**NOTE:** It's important to delete the cluster to avoid running up Azure charges for a cluster you no longer require. You will be charged for the cluster all the time it is active, even if you aren't using it.
+**NOTE:** 
 
 Deleting the cluster doesn't delete the storage account or network resources. You can reuse these items for other clusters.
 

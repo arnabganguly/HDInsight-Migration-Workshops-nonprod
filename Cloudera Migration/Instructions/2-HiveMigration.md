@@ -6,14 +6,22 @@ In this exercise, you'll migrate an active Hive database from Cloudera to HDInsi
 
 - Examine the workload and database currently running on Cloudera.
 - Create the virtual infrastructure for an HDInsight Hive LLAP cluster, and then create the cluster.
-- Configure Hive replication to transfer the Hive database from Cloudera to the HDInsight cluster.
+- Use Hive export and import commands, and the DistCp utility, to transfer data from the Cloudera cluster to HDInsight.
 - Verify that the data is being replicated correctly.
 
-At the end of this process, the Hive database will have been relocated to the HDInsight cluster. Any applications that utilize the database can be reconfigured to connect to the instance on HDInsight.
+---
+
+**NOTE:**
+
+Cloudera doesn't currently support HiveServer2 replication; it implements its own replication mechanism. For this reason, you'll replicate the data in batches rather than using the continual process available through HiveServer2 replication.
+
+---
+
+At the end of this process, the Hive database will have been relocated to the HDInsight cluster. Applications that utilize the database for analytical purposes can be reconfigured to connect to the instance on HDInsight.
 
 ## Task 1: Run the existing workload
 
-In the existing on-premises system, a Spark application acts as a receiver for messages arriving on a Kafka topic. The Spark application posts selected parts of this data to a Hive database for analysis. In this exercise, you'll replicate the Cloudera Hive database to an HDInsight cluster while the Spark application is running. 
+In the existing on-premises system, a Spark application acts as a receiver for messages arriving on a Kafka topic. The Spark application posts selected parts of this data to a Hive database for analysis. In this exercise, you'll replicate the Cloudera Hive database to an HDInsight cluster.
 
 The first task is to examine the existing system
 
@@ -22,7 +30,7 @@ The first task is to examine the existing system
 ---
 
 **NOTE:**
-In a *fully migrated* system, the Spark application would run on an HDInsight Spark  cluster, and connect to Kafka running on an HDInsight Kafka cluster, as configured by the previous exercise. To save the costs of running multiple HDInsight clusters, in this exercise you'll revert to running Kafka on the original Cloudera cluster.
+In a *fully migrated* system, the Spark application would run on an HDInsight Spark  cluster, and connect to Kafka running on an HDInsight Kafka cluster, as configured by the previous exercise. To save the costs associated with running multiple HDInsight clusters, in this exercise you'll revert to running Kafka and Spark on the original Cloudera cluster.
 
 ---
 
@@ -38,7 +46,7 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
     cd ~/apps/kafka
     ```
 
-1. Start the Producer app:
+1. Start the **EventProducer** app:
 
     ```bash
     java -cp EventProducer.jar eventdriver \
@@ -167,13 +175,21 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
     ...
     ```
 
-1. Leave the SparkConsumer app running, and open a new command prompt window on the desktop. Open another connection to the Cloudera virtual machine:
+1. Press CTRL-C to stop the **SparkConsumer** app, and run the following command to halt the **EventProducer** app:
 
     ```bash
-    ssh azureuser@<ip address>
+    kill %1
     ```
+   
+    ---
 
-1. In the new connection, start the **hive** utility:
+    **NOTE:**
+
+    In the 'live' system, the **SparkConsumer** and **EventProducer** apps will be running continually, but the Cloudera virtual machine used by this exercise provides only a limited amount of resources, and some of the subsequent procedures may take a long time to run if these apps are left running.
+
+    --- 
+
+1. In shell prompt, start the **hive** utility:
 
     ```bash
     hive
@@ -299,7 +315,9 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
     ---
 
-    **NOTE:** This operation may take 15 or 20 minutes to complete
+    **NOTE:** 
+    
+    This operation may take 15 or 20 minutes to complete
 
     ---
 
@@ -325,9 +343,9 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
     ![The **Hosts** page in Ambari. The names and addresses of the worker nodes are highlighted.](../Images/3-Worker-Addresses.png)
 
-1. Return to the **Command Prompt** window displaying the inactive SSH connection to the Cloudera virtual machine (the other SSH connection should still be running the Spark application that writes data to Hive).
+1. Return to the **Command Prompt** window displaying the SSH connection to the Cloudera virtual machine.
 
-1. Run the following command to create a bash shell running as root.
+1. On the Cloudera virtual machine. run the following command to create a bash shell running as root.
 
     ```bash
     sudo bash
@@ -413,7 +431,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     exit
     ```
 
-1. Connect to the first worker node. The password is **Pa55w.rdDemo**, as before:
+1. Connect to the first worker node. The password is **Pa55w.rdDemo**, as before (the example below uses **wn0-llapcl**, although the name of the first node in your cluster may be different):
 
     ```bash
     ssh wn0-llapcl
@@ -434,3 +452,187 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     ---
 
 ### Replicate data from the Cloudera cluster to the HDInsight LLAP cluster
+
+1.  In the Azure portal, open a Cloud Shell prompt running PowerShell.
+
+1. Run the following command to create a directory named **staging** in the filesystem for the HDInsight cluster. Replace **\<9999\>** with the numeric suffix you used for the cluster storage account:
+
+    ```PowerShell
+    az storage fs directory create `
+        --name staging `
+        --file-system cluster<9999> `
+        --account-name clusterstorage<9999>
+    ```
+
+1. Retrieve the storage account keys for the storage account:
+
+    ```PowerShell
+    Get-AzStorageAccountKey -ResourceGroupName 'clusterrg' `
+        -AccountName 'clusterstorage<9999>'
+    ```
+    
+    Make a note of the value of the **key1** key.
+
+
+1. Return to the SSH shell on the Cloudera virtual machine.
+
+1. Start the hive utility, and run the following query:
+
+    ```sql
+    SELECT MAX(timestamp) FROM flightinfo;
+    ```
+
+    Make a note of the value returned.
+
+1. Create a another table named **todaysinfo** with the same structure as the **flightinfo** table:
+
+    ```sql
+    CREATE TABLE todaysinfo LIKE flightinfo;
+    ```
+    
+1. Copy the data up to the point in time noted earlier to the **todaysinfo** table. Replace **\<value\>** with the value returned by the previous query:
+
+    ```sql
+    INSERT INTO todaysinfo
+    SELECT * FROM flightinfo
+    WHERE timestamp <= '<value>';
+    ```
+
+1. Export the **todaysinfo** table to a folder named **exports** in HDFS:
+
+    ```sql
+    export table todaysinfo to 'exports/todaysinfo';
+    ```
+
+1. Download the Java libraries required to connect to Azure storage from the **DistCp** utility:
+
+    ```bash
+    wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-azure/3.3.0/hadoop-azure-3.3.0.jar
+    
+    wget https://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/8.6.5/azure-storage-8.6.5.jar
+
+    export azjars=/home/azureuser/azure-storage-8.6.5.jar,/home/azureuser/hadoop-azure-3.3.0.jar
+    ```
+
+1. Run the following **DistCp** command to copy the exported data in the **exports** directory in HDFS to the **staging** directory in the HDInsight cluster. Replace **\<key\>** with the key for the storage account used by the HDInsight cluster, and replace **\<9999\>** with the numeric suffix for your storage account:
+
+    ```bash
+    hadoop distcp \
+        -libjars $azjars \
+        -D fs.AbstractFileSystem.wasb.Impl=org.apache.hadoop.fs.azure.Wasb \
+        -D fs.azure.account.key.clusterstorage<9999>.blob.core.windows.net='<key>' \
+        /user/azureuser/exports/todaysinfo \
+        wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging
+    ```
+
+1. Use the **hdfs** command shown below to list the contents of the **staging** directory in the storage account for the HDInsight cluster, to verify that the exported files have been transferred:
+
+    ```bash
+    hdfs dfs -libjars $azjars \
+        -D fs.AbstractFileSystem.wasb.Impl=org.apache.hadoop.fs.azure.Wasb \
+        -D fs.azure.account.key.clusterstorage<9999>.blob.core.windows.net='<key>' \
+        -ls -R wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging
+    ```
+
+    The output should include the following files:
+
+    ```text
+    drwxr-xr-x   - azureuser supergroup          0 2020-11-10 14:17 wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging/todaysinfo
+    -rw-r--r--   1 azureuser supergroup       1895 2020-11-10 14:17 wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging/todaysinfo/_metadata
+    drwxr-xr-x   - azureuser supergroup          0 2020-11-10 14:17 wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging/todaysinfo/data
+    -rw-r--r--   1 azureuser supergroup      48310 2020-11-10 14:17 wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging/todaysinfo/data/000000_0
+    ```
+
+1. Switch to the SSH session connected to the head node of the HDInsight cluster.
+
+1. Start the **beeline** utility as the **hive** user, and connect to the local Hive server:
+
+    ```bash
+    sudo -u hive beeline -u 'jdbc:hive2://localhost:10001/;transportMode=http'
+    ```
+
+    ---
+
+    **NOTE:**
+
+    To import a table, you must have sufficient rights over the **/hive/warehouse/managed/** folder in the cluster filesystem. The **azureuser** account doesn't have the necessary priviliges, which is why you have started **beeline** as the **hive** user instead.
+
+    ---
+
+1. Import the data for the **flightinfo** table from the **staging** folder:
+
+    ```sql
+    import table flightinfo from  '/staging/todaysinfo';
+    ```
+
+1. Disconnect from **beeline**:
+
+    ```sql
+    exit;
+    ```
+
+1. Restart **beeline** as the **azureuser** user:
+
+    ```bash
+    beeline -u 'jdbc:hive2://localhost:10001/;transportMode=http'
+    ```
+
+1. Run the following query to verify that the **flightinfo** table has been imported successfully:
+
+    ```sql
+    SELECT * FROM flightinfo;
+    ```
+    
+    ---
+
+    **You have now migrated the Hive database to HDInsight. To keep the data on the HDInsight cluster up-to-date, you perform the following tasks:**
+    
+    1. Save the note of the timestamp for the last record copied from the **flightinfo** table.
+
+    1. Using hive on the Cloudera cluster, run the following query to find the timestamp for the most recent change:
+
+        ```sql
+        SELECT MAX(timestamp) FROM flightinfo;
+        ```
+    
+    1. Remove and recreate the **todaysinfo** table:
+
+        ```sql
+        DROP TABLE todaysinfo;
+        CREATE TABLE todaysinfo LIKE flightinfo;
+        ```
+
+    1. Copy the latest data into the **todaysinfo** table. In this statement, **\<previous_timestamp\>** is the timestamp from the previous run, and **\<latest_timestamp\>** is the most recent timestamp:
+
+        ```sql
+        INSERT INTO todaysinfo
+        SELECT * FROM flightinfo
+        WHERE timestamp > '<previous_timestamp>' AND
+              timestamp <= '<lastest_timestamp>';
+        ```
+
+    1. Export the **todaysinfo** table.
+
+    1. Delete the existing data from the **staging** directory in the HDInsight cluster:
+
+        ```bash
+        hdfs dfs -libjars $azjars \
+            -D fs.AbstractFileSystem.wasb.Impl=org.apache.hadoop.fs.azure.Wasb \  
+            -D fs.azure.account.key.clusterstorage<9999>.blob.core.windows.net='<key>' \
+            -rm -R wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging
+        ```
+
+    1. Run **DistCp** to transfer the exported data to the **staging** directory.
+
+    1. On the HDInsight cluster, import the data from the **staging** directory into the **flightinfo** table.
+    
+
+    ---
+
+## Task 6: Tidy up
+
+1. In the Azure portal, go to the page for the HDInsight LLAP cluster.
+
+1. In the command bar, select **Delete**:
+
+1. In the confirmation pane, enter the name of the cluster, and then select **Delete**.
