@@ -214,7 +214,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     | Subscription | Select your subscription |
     | Select | clustermanagedid |
 
-1. Wait while the role is assigned, and then click **Role assignments* to verify that it has been assigned successfully:
+1. Wait while the role is assigned, and then click **Role assignments** to verify that it has been assigned successfully:
 
     ![The **Role assignments** page in the Azure portal. The **clustermanagedid** identity has been assigned the **Storage BlobData Owner** role in the storage account](../Images/2-Verify-Role-Assignment.png)
 

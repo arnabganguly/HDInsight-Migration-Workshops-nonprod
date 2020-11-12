@@ -439,10 +439,9 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
 1. Start a shell running as root, edit the **/etc/hosts** file, add the entry for the **onprem** virtual machine as before, and then exit the root shell.
 
-1. Disconnect from the wn0-kafkac node, and return to the head node of the cluster.
+1. Disconnect from the **wn0-llapcl** node, and return to the head node of the cluster.
 
 1. Repeat the previous three steps for the two remaining worker nodes, **wn1-llapcl** and **wn2-llapcl**.
-
 
     ---
 
@@ -504,22 +503,10 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     export table todaysinfo to 'exports/todaysinfo';
     ```
 
-1. Download the Java libraries required to connect to Azure storage from the **DistCp** utility:
-
-    ```bash
-    wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-azure/3.3.0/hadoop-azure-3.3.0.jar
-    
-    wget https://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/8.6.5/azure-storage-8.6.5.jar
-
-    export azjars=/home/azureuser/azure-storage-8.6.5.jar,/home/azureuser/hadoop-azure-3.3.0.jar
-    ```
-
 1. Run the following **DistCp** command to copy the exported data in the **exports** directory in HDFS to the **staging** directory in the HDInsight cluster. Replace **\<key\>** with the key for the storage account used by the HDInsight cluster, and replace **\<9999\>** with the numeric suffix for your storage account:
 
     ```bash
     hadoop distcp \
-        -libjars $azjars \
-        -D fs.AbstractFileSystem.wasb.Impl=org.apache.hadoop.fs.azure.Wasb \
         -D fs.azure.account.key.clusterstorage<9999>.blob.core.windows.net='<key>' \
         /user/azureuser/exports/todaysinfo \
         wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging
@@ -528,8 +515,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 1. Use the **hdfs** command shown below to list the contents of the **staging** directory in the storage account for the HDInsight cluster, to verify that the exported files have been transferred:
 
     ```bash
-    hdfs dfs -libjars $azjars \
-        -D fs.AbstractFileSystem.wasb.Impl=org.apache.hadoop.fs.azure.Wasb \
+    hdfs dfs \
         -D fs.azure.account.key.clusterstorage<9999>.blob.core.windows.net='<key>' \
         -ls -R wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging
     ```
