@@ -25,7 +25,7 @@ In the existing on-premises system, a Spark application acts as a receiver for m
 
 The first task is to examine the existing system.
 
-![The structure of the existing Kafka/Spark/Hive system running on Cloudera](../Images/3-HiveSystem.png)
+![The structure of the existing Kafka/Spark/Hive system running on Cloudera](../Images/2-HiveSystem.png)
 
 ---
 
@@ -230,7 +230,7 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
 
 In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll reuse the existing virtual infrastructure (storage account and network) from the Kafka cluster you created in the previous exercise. You'll create a custom Hive metadata database using Azure SQL Database. This will enable you to share the Hive metadata with other other HDInsight clusters that need to access the Hive database.
 
-<img alt="The virtual infrastructure required by te HDInsight Kafka cluster" src="../Images/3-HDInsightHive.png" width=60%>
+<img alt="The virtual infrastructure required by te HDInsight Kafka cluster" src="../Images/2-HDInsightHive.png" width=60%>
 
 ### Create the SQL database
 
@@ -257,11 +257,11 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
 1. On the **hivedb*9999*** page, select **Set server firewall**.
 
-    ![The SQL Database properties page in the Azure portal. The user has selected **Set server firewall**](../Images/3-SQLDatabase.png)
+    ![The SQL Database properties page in the Azure portal. The user has selected **Set server firewall**](../Images/2-SQLDatabase.png)
 
 1. On the **Firewall settings** page, set **Allow Azure services and resources to access this server** to **Yes**, select **Save**, and then select **OK** when the firewall has been updated.
 
-    ![The **Firewall settings** page in the Azure portal. The user has opened the firewall to Azure services and resources](../Images/3-SetFirewall.png)
+    ![The **Firewall settings** page in the Azure portal. The user has opened the firewall to Azure services and resources](../Images/2-SetFirewall.png)
     
 ### Create the LLAP cluster
 
@@ -329,7 +329,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
 1. Sign in to Ambari as **admin** with password **Pa55w.rdDemo** when prompted. The Ambari page should show that the cluster is running the HDFS, Hive, and Zookeeper services (amongst others).:
 
-    ![The Ambari home page, showing the running services for the Hive cluster.](../Images/3-Ambari-Home.png)
+    ![The Ambari home page, showing the running services for the Hive cluster.](../Images/2-Ambari-Home.png)
 
     ---
 
@@ -341,7 +341,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
 1. In the left-hand pane of the Ambari page, select **Hosts**. Make a note of the name prefixes and IP addresses of the worker nodes with the prefixes **wn0**, **wn1**, and **wn2**.
 
-    ![The **Hosts** page in Ambari. The names and addresses of the worker nodes are highlighted.](../Images/3-Worker-Addresses.png)
+    ![The **Hosts** page in Ambari. The names and addresses of the worker nodes are highlighted.](../Images/2-Worker-Addresses.png)
 
 1. Return to the **Command Prompt** window displaying the SSH connection to the Cloudera virtual machine.
 
@@ -366,7 +366,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
     # Entries for worker nodes
     10.3.0.11 wn0-llapcl
-    10.3.0.4  wn3-llapcl
+    10.3.0.4  wn2-llapcl
     10.3.0.14 wn4-llapcl
     ```
 
@@ -446,7 +446,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     ---
 
     **NOTE:**
-    Under some circumstances, the worker nodes might not be named sequentially. For example, you might that they are named **wn3-llapcl** and **wn4-llapcl**, as illustrated in the examples shown above. Check the entries in the **/etc/hosts** file of the head node for the names of these nodes.
+    Under some circumstances, the worker nodes might not be named sequentially. For example, you might that they are named **wn2-llapcl** and **wn4-llapcl**, as illustrated in the examples shown above. Check the entries in the **/etc/hosts** file of the head node for the names of these nodes.
 
     ---
 
@@ -617,10 +617,4 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
     ---
 
-## Task 5: Tidy up
-
-1. In the Azure portal, go to the page for the HDInsight LLAP cluster.
-
-1. In the command bar, select **Delete**:
-
-1. In the confirmation pane, enter the name of the cluster, and then select **Delete**.
+Leave the HDInsight Hive cluster running; you'll use it in the next exercise.

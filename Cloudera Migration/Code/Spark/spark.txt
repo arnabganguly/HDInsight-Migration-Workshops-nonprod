@@ -12,6 +12,9 @@ spark2-submit \
 export SPARK_KAFKA_VERSION=0.10
 
 
+pyspark2 --driver-cores 2 --executor-memory 512m
+
+
 root
  |-- key: binary (nullable = true)
  |-- value: binary (nullable = true)

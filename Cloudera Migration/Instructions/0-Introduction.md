@@ -4,9 +4,8 @@ In this workshop, you'll learn how to:
 
 - Migrate a Kafka workload from Cloudera to an HDInsight 4.0 Kafka cluster.
 - Migrate a Hive workload and data from Cloudera to an HDInsight 4.0 LLAP cluster.
-- Migrate HBase data from Cloudera to an HDInsight 4.0 HBase cluster.
 - Migrate a Spark workload from Cloudera to an HDInsight 4.0 Spark cluster.
-
+- Migrate HBase data from Cloudera to an HDInsight 4.0 HBase cluster.
 
 This workshop follows the techniques and strategies described in the document **Migrate your Big Data Workloads to HDInsight**.
 
@@ -14,13 +13,13 @@ This workshop follows the techniques and strategies described in the document **
 
 Imagine that you work for Contoso, an organization that performs Big Data analytics for the transport industry. The organization is currently engaged in a project that examines the data for commercial airlines, tracking which airlines fly to and from which airports, and analysing the flight times and frequency of flight delays. The data arrives from a number of sources, and includes real-time tracking information provided by the airlines and the various airports. The raw data is captured using Kafka and passed to a number of clients for processing using Spark and Hive. The processed data is stored in an HBase database for subsequent analysis. The current system is based on a Cloudera cluster, running  Hive, Spark, HBase, and Kafka services. The following image shows the high-level architecture of the existing system:
 
-![The high-level architecture of the existing Cloudera-based system](../Images/1-ClouderaSystem.png)
+![The high-level architecture of the existing Cloudera-based system](../Images/0-ClouderaSystem.png)
 
 Contoso wish to move operations from Cloudera to HDInsight. However, the system cannot be shutdown while migration occurs, so the transfer must e performed in a manner that allows operations to continue during the switchover, although some temporary degradation in performance is permissible while this occurs.
 
 You will migrate from the Cloudera cluster to four HDInsight clusters, utilizing shared cluster storage and metadata databases. This architecture enables you to decouple and tune each cluster for a specific workload, and allows you to scale the clusters independently. The solution architecture looks like this:
 
-![The high-level architecture of the new system comprising four HDInsight clusters](../Images/1-HDInsightSystem.png)
+![The high-level architecture of the new system comprising four HDInsight clusters](../Images/0-HDInsightSystem.png)
 
 The HBase cluster utilizes its own storage account. The rationale behind this approach is that while Azure Data Lake Gen 2 storage gives the best performance for Hive, Spark, and Kafka clusters, HBase works best with Azure Blob storage.
 
@@ -42,19 +41,19 @@ Perform the following tasks:
 
 1. On the **Home** page, click **Subscriptions**.
 
-    ![The **Home** page in the Azure portal. The user has selected **Subscriptions**.](../Images/1-PortalHome.png)
+    ![The **Home** page in the Azure portal. The user has selected **Subscriptions**.](../Images/0-PortalHome.png)
 
 1. Make a note of the **Subscription ID** associated with your account.
 
-    ![The **Subscriptions** page in the Azure portal. The user's subscription is highlighted.](../Images/1-Subscriptions.png)
+    ![The **Subscriptions** page in the Azure portal. The user's subscription is highlighted.](../Images/0-Subscriptions.png)
 
 1. In the toolbar, click **Cloud Shell**.
 
-    ![The toolbar page in the Azure portal. The user has selected **Cloud Shell**.](../Images/1-CloudShell.png)
+    ![The toolbar page in the Azure portal. The user has selected **Cloud Shell**.](../Images/0-CloudShell.png)
 
 1. In the Cloud Shell dropdown list, select **PowerShell**. Click **Confirm** if prompted.
 
-    ![The Cloud Shell dropdown. The user has selected **PowerShell**.](../Images/1-PowerShell.png)
+    ![The Cloud Shell dropdown. The user has selected **PowerShell**.](../Images/0-PowerShell.png)
 
 1. Run the following commands to set up the parameters and configuration settings for the Contoso virtual machine and its associated resources. Replace *\<your-subscription-id\*> with the subscription ID you noted previously. You should also change the *location* variable to match your nearest Azure region.
 
@@ -71,7 +70,7 @@ Perform the following tasks:
     #Specify the location for creating resources
     $location = "East US"
 
-    # TBD - THIS WILL HAVE TO BE STORED SOMEWHERE ACCESSIBLE TO STUDENTS
+    # TBD: THIS WILL HAVE TO BE STORED SOMEWHERE ACCESSIBLE TO STUDENTS
     $sourceDiskName = 'clouderadisk'
 
     #Provide the name of the OS disk that will be created using the snapshot
@@ -208,7 +207,7 @@ Perform the following tasks:
 1. Create a disk containing the image for the virtual machine:
 
     ```PowerShell
-    #NOTE: THIS MAY NEED TO CHANGE, DEPENDING ON WHERE THE SOURCE DISK IS HOSTED
+    #TBD: THIS MAY NEED TO CHANGE, DEPENDING ON WHERE THE SOURCE DISK IS HOSTED
     #Get the details of the disk containing the image for the virtual machine
     $sourceDisk = Get-AzDisk `
         -ResourceGroupName $diskResourceGroupName `
@@ -219,7 +218,7 @@ Perform the following tasks:
     $targetDiskConfig = New-AzDiskConfig `
         -SkuName 'Standard_LRS' `
         -osType 'Linux' `
-        -UploadSizeInBytes $($sourceDisk.DiskSizeBytes+512) `
+        -UploadSizeInBytes $($sourceDisk.DiskSizeBytes + 512) `
         -Location $Location `
         -CreateOption 'Upload'
 
@@ -266,7 +265,7 @@ Perform the following tasks:
 
     #Create a public IP for the VM
     $publicIp = New-AzPublicIpAddress `
-        -Name ($VirtualMachineName.ToLower()+'_ip') `
+        -Name ($VirtualMachineName.ToLower() + '_ip') `
         -ResourceGroupName $resourceGroupName `
         -Location $location `
         -AllocationMethod Static
@@ -278,7 +277,7 @@ Perform the following tasks:
 
     # Create NIC for the first subnet of the virtual network
     $nic = New-AzNetworkInterface `
-        -Name ($VirtualMachineName.ToLower()+'_nic') `
+        -Name ($VirtualMachineName.ToLower() + '_nic') `
         -ResourceGroupName $resourceGroupName `
         -Location $location `
         -SubnetId $vnet.Subnets[0].Id -PublicIpAddressId $publicIp.Id
@@ -306,7 +305,7 @@ Perform the following tasks:
 
     ```PowerShell
     $ipAddr = (Get-AzPublicIpAddress `
-        -Name ($VirtualMachineName.ToLower()+'_ip') `
+        -Name ($VirtualMachineName.ToLower() + '_ip') `
         -ResourceGroupName $resourceGroupName).IpAddress
 
     echo $ipAddr
@@ -318,7 +317,7 @@ Perform the following tasks:
 
     **NOTE:** 
     
-    You may need to wait for a couple of minutes while the virtual machine services start before continuing
+    You may need to wait for a minute while the virtual machine services start before continuing
 
     ---
 
@@ -338,7 +337,7 @@ Perform the following tasks:
     exit
     ```
 
-1. Connect using SSH as the **azureuser** user.
+1. Connect using SSH as the **azureuser** user, with the password you just set up for this user.
 
     ```PowerShell
     ssh azureuser@$ipAddr
@@ -374,17 +373,17 @@ Perform the following tasks:
     
     ---
     
-    ![The Cloudera Manager login page in the web browser.](../Images/1-Cloudera-Login.png)
+    ![The Cloudera Manager login page in the web browser.](../Images/0-Cloudera-Login.png)
 
 1. Log in with the username **admin** with password **admin**.
 
 1. In the Cloudera Manager, select the drop-down menu for the **Cloudera Management Service**, select **Start**, and wait for the management service to start up correctly.
 
-    ![The Cloudera Management Service menu. The user has selected **Start**.](../Images/1-Start-Cloudera-Manager.png)
+    ![The Cloudera Management Service menu. The user has selected **Start**.](../Images/0-Start-Cloudera-Manager.png)
 
 1. Select the drop-down menu for the **Cluster 1** cluster, and wait for the various services (Zookeeper, HDFS, Kafka, HBase, Yarn, Spark, and Hive) to start.
 
-    ![The Cluster menu. The user has selected **Start**.](../Images/1-Start-Cloudera-Services.png)
+    ![The Cluster menu. The user has selected **Start**.](../Images/0-Start-Cloudera-Services.png)
 
 1. Verify that all services are shown as running correctly.
 
@@ -395,7 +394,7 @@ Perform the following tasks:
 
     ---
 
-    ![The Cluster Manager. All services have started successfully.](../Images/1-Cloudera-Services-Running.png)
+    ![The Cluster Manager. All services have started successfully.](../Images/0-Cloudera-Services-Running.png)
 
 1. In the Azure portal, close the PowerShell pane.
 

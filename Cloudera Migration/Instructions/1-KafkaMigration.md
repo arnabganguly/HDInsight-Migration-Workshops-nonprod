@@ -23,7 +23,7 @@ In the *live* Cloudera system the consumer is a Spark application, but for the p
 
 ---
 
-![The structure of the existing Kafka system running on Cloudera](../Images/2-KafkaSystem.png)
+![The structure of the existing Kafka system running on Cloudera](../Images/1-KafkaSystem.png)
 
 1. On your desktop, open a **Command Prompt** window and sign in to the Cloudera virtual machine. The username is **azureuser***. Replace *\<ip_address`>* with the IP address of the virtual machine.
 
@@ -99,7 +99,7 @@ In the *live* Cloudera system the consumer is a Spark application, but for the p
 
 In this task, you'll create a new virtual network and subnet to host the cluster.  Then you'll create an Azure Data Lake Gen 2 storage account to be used as the cluster storage for the HDInsight Kafka cluster. Next, you'll add a user-assigned managed identity that HDInsight will use to access the cluster storage. Finally, you'll create the Kafka cluster using this virtual infrastructure.
 
-<img alt="The virtual infrastructure required by te HDInsight Kafka cluster" src="../Images/2-HDInsightKafka.png" width=50%>
+<img alt="The virtual infrastructure required by te HDInsight Kafka cluster" src="../Images/1-HDInsightKafka.png" width=50%>
 
 ### Create the virtual network
 
@@ -107,11 +107,11 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
 1. If the Home page isn't currently displayed, click select the **Home** link in the upper left hand corner:
 
-     ![The **Home** link on a page in the Azure portal](../Images/2-Home-Link.png)
+     ![The **Home** link on a page in the Azure portal](../Images/1-Home-Link.png)
 
 1. On the Home page, hover over the **Resource Groups** icon, and then select **Create**:
 
-    ![The Resource Groups icon on the Home page in the Azure portal](../Images/2-Home-Page.png)
+    ![The Resource Groups icon on the Home page in the Azure portal](../Images/1-Home-Page.png)
 
 1. On the **Create a resource group** page,  select the same subscription and region that you used to create the Cloudera virtual machine. Name the resource group **clusterrg**, and then select **Review + create**.
 
@@ -121,7 +121,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
 1. On the **New** page, in the **Search the Marketplace** box, type **virtual network**, and then select **Virtual Network** from the list that appears:
 
-    ![The New page in the Azure portal. The user has selected **Virtual Network**](../Images/2-New-Virtual-Network.png)
+    ![The New page in the Azure portal. The user has selected **Virtual Network**](../Images/1-New-Virtual-Network.png)
 
 1. On the **Virtual Network** page, select **Create**
 
@@ -143,7 +143,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     | Add IPv6 address space | Leave unchecked |
     | Add subnet | Click the **default** subnet. In the **Edit subnet** pane, change the name of the subnet to **clustersubnet**, and then select **Save** |
 
-    ![The **IP Addresses** tab for a new virtual network. The user has changed the name of the subnet to **clustersubnet**](../Images/2-Edit-Subnet.png)
+    ![The **IP Addresses** tab for a new virtual network. The user has changed the name of the subnet to **clustersubnet**](../Images/1-Edit-Subnet.png)
 
 1. On the validation page, select **Create**, and wait while the virtual network is created.
 
@@ -198,12 +198,12 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
 1. On the **clusterstorage*9999*** page select **Access Control (IAM)**:
 
-    ![The **clusterstorage*9999*** page in the Azure portal. The user has selected **Access Control (IAM)**](../Images/2-Storage-Account.png)
+    ![The **clusterstorage*9999*** page in the Azure portal. The user has selected **Access Control (IAM)**](../Images/1-Storage-Account.png)
 
 1. On the **clusterstorage*9999* | Access Control (IAM)** page select **Add**, and then select **Add role assignment**:
 
 
-    ![The **clusterstorage*9999* | Access Control (IAM)** page in the Azure portal. The user has selected **Add role assignment**](../Images/2-Add-Role-Assignment.png)
+    ![The **clusterstorage*9999* | Access Control (IAM)** page in the Azure portal. The user has selected **Add role assignment**](../Images/1-Add-Role-Assignment.png)
 
 1. In the **Add role assignment** pane, enter the following settings, and then select **Save**:
 
@@ -216,7 +216,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
 1. Wait while the role is assigned, and then click **Role assignments** to verify that it has been assigned successfully:
 
-    ![The **Role assignments** page in the Azure portal. The **clustermanagedid** identity has been assigned the **Storage BlobData Owner** role in the storage account](../Images/2-Verify-Role-Assignment.png)
+    ![The **Role assignments** page in the Azure portal. The **clustermanagedid** identity has been assigned the **Storage BlobData Owner** role in the storage account](../Images/1-Verify-Role-Assignment.png)
 
 ### Create the Kafka cluster
 
@@ -280,21 +280,21 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
 In this task, you'll configure peering between the virtual network containing the Cloudera cluster and the virtual network for the HDInsight Kafka cluster. You'll then use MirrorMaker to replicate Kafka topics from the Cloudera cluster to the HDInsight cluster:
 
-![Kafka on Cloudera replicating data to the HDInsight cluster using MirrorMaker](../Images/2-MirrorMaker.png)
+![Kafka on Cloudera replicating data to the HDInsight cluster using MirrorMaker](../Images/1-MirrorMaker.png)
 
 ### Peer the virtual networks
 
 1. On the Home page in the Azure portal, under **Recent resources**, select **clustervnet**:
 
-    ![The **Recent resource** list on the Home page in the Azure portal. The user has selected the **clustervnet** virtual network](../Images/2-Recent-Resources.png)
+    ![The **Recent resource** list on the Home page in the Azure portal. The user has selected the **clustervnet** virtual network](../Images/1-Recent-Resources.png)
 
 1. On the **clustervnet** page, under **Settings**, select **Peerings**:
 
-    ![The **clustervnet** page in the Azure portal. The user has selected **Peerings**](../Images/2-Peerings.png)
+    ![The **clustervnet** page in the Azure portal. The user has selected **Peerings**](../Images/1-Peerings.png)
 
 1. On the **clustervnet | Peerings** page, select **Add**:
 
-    ![The **clustervnet | Peerings** page in the Azure portal. The user is about to add a new peering](../Images/2-Peerings-Add.png)
+    ![The **clustervnet | Peerings** page in the Azure portal. The user is about to add a new peering](../Images/1-Peerings-Add.png)
 
 1. On the **Add peering** page, enter the following settings, and then select **OK**:
 
@@ -320,16 +320,16 @@ In this task, you'll configure peering between the virtual network containing th
 
 1. On the **Overview** page for the cluster, under **Dashboards**, select **Ambari home**:
 
-    ![The **kafkacluster*9999*** page in the Azure portal. The user has selected **Ambari home**](../Images/2-Cluster-Overview.png)
+    ![The **kafkacluster*9999*** page in the Azure portal. The user has selected **Ambari home**](../Images/1-Cluster-Overview.png)
 
 1. Sign in to Ambari as **admin** with password **Pa55w.rdDemo** when prompted. The Ambari page should show that the cluster is running the Zookeeper and Kafka services (amongst others):
 
-    ![The Ambari home page, showing the running services.](../Images/2-Ambari-Home.png)
+    ![The Ambari home page, showing the running services.](../Images/1-Ambari-Home.png)
 
 
 1. In the left-hand pane, select the **Kafka** service. In the main pane, select **Configs**. In the **Filter** box, type **min.insync.replicas**. Change the value of **min.insync.replicas** to 1, and then select **Save**.
 
-    ![The Kafa configuration page in Ambari. The user has changed the **min.insync.replicas** setting to 1.](../Images/2-Configure-Kafka.png)
+    ![The Kafa configuration page in Ambari. The user has changed the **min.insync.replicas** setting to 1.](../Images/1-Configure-Kafka.png)
 
     ---
 
@@ -345,11 +345,11 @@ In this task, you'll configure peering between the virtual network containing th
 
 1. In the **Background Operations** dialog, wait while the service restarts, and then select **OK**.
 
-    ![The **Background Operations** page in Ambari. The Kafka service has restarted.](../Images/2-Restart-Kafka.png)
+    ![The **Background Operations** page in Ambari. The Kafka service has restarted.](../Images/1-Restart-Kafka.png)
 
 1. In the left-hand pane of the Ambari page, select **Hosts**. Make a note of the name prefixes and IP addresses of the worker nodes with the prefixes **wn0**, **wn1**, and **wn2**.
 
-    ![The **Hosts** page in Ambari. The names and addresses of the worker nodes are highlighted.](../Images/2-Worker-Addresses.png)
+    ![The **Hosts** page in Ambari. The names and addresses of the worker nodes are highlighted.](../Images/1-Worker-Addresses.png)
 
 1. Return to the **Command Prompt** window displaying the SSH connection to the Cloudera virtual machine.
 
@@ -383,7 +383,7 @@ In this task, you'll configure peering between the virtual network containing th
     # Entries for worker nodes
     10.3.0.14 wn0-kafkac
     10.3.0.13 wn1-kafkac
-    10.3.0.8  wn2-kafkac
+    10.3.0.8  wn1-kafkac
     ```
 
 1. Run the **ifconfig** command, and make a note of the **inet addr** field for the **eth0** device. This is the private IP address of the Cloudera virtual machine. The text below shows an example of the output generated by the **ifconfig** command. In this example, the **inet addr** is 10.10.0.4.
@@ -412,7 +412,7 @@ In this task, you'll configure peering between the virtual network containing th
 
 1. In the Azure portal, on the page for **kafkacluster*9999***, under **Settings**, select **SSH + Cluster login**. In the **SSH + Cluster login** pane, in the **Hostname** list select your cluster, and then make a note of the **ssh** command you can use to connect to this cluster:
 
-    ![The **kafkacluster*9999* | SSH + Cluster login** page in the Azure portal.](../Images/2-SSH-Cluster-Login.png)
+    ![The **kafkacluster*9999* | SSH + Cluster login** page in the Azure portal.](../Images/1-SSH-Cluster-Login.png)
 
 1. On the desktop, open another command prompt window, and run the SSH command you just noted, to sign in to the head node of the Kafka cluster. The password is **Pa55w.rdDemo**:
 
@@ -460,7 +460,7 @@ In this task, you'll configure peering between the virtual network containing th
 
 1. Disconnect from the wn0-kafkac node, and return to the head node of the cluster.
 
-1. Repeat the previous three steps for the two remaining worker nodes, **wn1-kafkac** and **wn2-kafkac**.
+1. Repeat the previous three steps for the two remaining worker nodes, **wn1-kafkac** and **wn1-kafkac**.
 
     ---
 
@@ -483,7 +483,7 @@ In this task, you'll configure peering between the virtual network containing th
 1. Create another file named **producer.properties** with the following text:
 
     ```text
-    bootstrap.servers=wn0-kafkac:9092,wn1-kafkac:9092,wn2-kafkac:9092
+    bootstrap.servers=wn0-kafkac:9092,wn1-kafkac:9092,wn1-kafkac:9092
     acks=1
     batch.size=100
     ```
@@ -561,7 +561,7 @@ In this task, you'll configure peering between the virtual network containing th
 
 In this task, you'll migrate and reconfigure the Kafka consumer application to subscribe to topics in the HDInsight Kafka cluster.
 
-![Kafka consumer subscribing to topics on the HDInsight cluster](../Images/2-HDInsightConsumer.png)
+![Kafka consumer subscribing to topics on the HDInsight cluster](../Images/1-HDInsightConsumer.png)
 
 1. Switch back to the SSH session for the Cloudera virtual machine.
 
@@ -631,7 +631,7 @@ In this task, you'll migrate and reconfigure the Kafka consumer application to s
 
 In this task, you'll update the producer application to post messages to topics in the HDInsight cluster. After this step is complete, you can decommission Kafka in the Cloudera cluster.
 
-![Kafka producer posting to topics on the HDInsight cluster](../Images/2-HDInsightProducer.png)
+![Kafka producer posting to topics on the HDInsight cluster](../Images/1-HDInsightProducer.png)
 
 1. In the SSH session on the Cloudera virtual machine, run the following command to copy the Producer application to the head node in the HDInsight Kafka cluster:
 
@@ -697,8 +697,8 @@ Deleting the cluster doesn't delete the storage account or network resources. Yo
 
 1. In the command bar, select **Delete**:
 
-    ![The **kafkacluster*9999*** page in the Azure portal. The user is deleting the cluster](../Images/2-Delete-Cluster.png)
+    ![The **kafkacluster*9999*** page in the Azure portal. The user is deleting the cluster](../Images/1-Delete-Cluster.png)
 
 1. In the confirmation pane, enter the name of the cluster, and then select **Delete**.
 
-    ![The confirm cluster delete pane.](../Images/2-Delete-Confirm.png)
+    ![The confirm cluster delete pane.](../Images/1-Delete-Confirm.png)

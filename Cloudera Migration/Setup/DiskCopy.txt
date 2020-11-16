@@ -1,7 +1,9 @@
 $sourceRG = 'workshoprg'
 $sourceDiskName = 'clouderadisk'
-$targetDiskName = 'clouderadiskForHBase'
+$targetDiskName = 'clouderadiskForSpark'
 $targetRG = 'clouderarg'
+
+
 $targetLocate = 'eastus'
 $targetOS = 'Linux'
 

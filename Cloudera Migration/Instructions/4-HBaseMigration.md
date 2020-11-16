@@ -1,4 +1,4 @@
-# Exercise 3: Migrate an HBase database to HDInsight
+# Exercise 4: Migrate an HBase database to HDInsight
 
 ## Introduction
 
@@ -714,5 +714,3 @@ The operations described in this task assume that the data in the HBase database
 1. In the command bar, select **Delete**:
 
 1. In the confirmation pane, enter the name of the cluster, and then select **Delete**.
-
-
