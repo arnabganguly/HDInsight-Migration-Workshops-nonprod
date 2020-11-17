@@ -1,0 +1,42 @@
+sudo apt-get install make
+sudo apt-get install libbz2-dev
+sudo apt-get install liblzma-dev
+sudo apt-get install -y libkrb5-dev
+sudo apt-get install libsqlite3-dev
+
+wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz
+tar -xvf Python-3.6.3.tgz
+cd Python-3.6.3
+sudo ./configure --enable-loadable-sqlite-extensions --enable-optimizations
+sudo make -j8
+sudo make install
+sudo ln -sf /usr/local/bin/python3 /usr/bin/python
+
+sudo pip3 install --upgrade pip
+
+sudo apt-get -y install ipython3 ipython3-notebook
+sudo pip3 install jupyter
+sudo pip3 install sparksql-magic
+sudo pip3 install sparkmagic
+
+sudo jupyter nbextension enable --py --sys-prefix widgetsnbextension
+sudo jupyter serverextension enable --py sparkmagic
+
+sudo jupyter-kernelspec install /usr/local/lib/python3.6/site-packages/sparkmagic/kernels/sparkkernel
+sudo jupyter-kernelspec install /usr/local/lib/python3.6/site-packages/sparkmagic/kernels/pysparkkernel
+sudo jupyter-kernelspec install /usr/local/lib/python3.6/site-packages/sparkmagic/kernels/wrapperkernel
+sudo jupyter-kernelspec install /usr/local/lib/python3.6/site-packages/sparkmagic/kernels/sparkrkernel
+
+sudo pip3 install pysqlite3
+
+sudo chown azureuser:azureuser ~/.local/share
+sudo chown azureuser:azureuser ~/.local/share/jupyter
+
+jupyter notebook --generate-config
+# Copy config files from jupyterconfig folder to .jupyter to enable remote access
+
+export PYSPARK_DRIVER_PYTHON="jupyter"
+export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
+export PYSPARK_PYTHON=python3
+
+pyspark2 --driver-cores 2 --executor-memory 512m

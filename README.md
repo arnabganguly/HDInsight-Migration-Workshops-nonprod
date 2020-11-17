@@ -8,7 +8,7 @@ In this lab, you'll learn how to migrate some common workloads running on a Clou
 
 This lab creates several HDInsight clusters and a virtual machine for running Cloudera. Make sure that you delete these resources when you have finished, otherwise you will generate considerable charges.
 
-Additionally, an HDInsight cluster comprises a number of virtual machines. You may need to request an increase in the quota for the number of CPU cores for your subscription (64 cores recommended). For more information, read [Standard quota: Increase limits by VM series](https://docs.microsoft.com/azure/azure-portal/supportability/per-vm-quota-requests).
+Additionally, an HDInsight cluster comprises a number of virtual machines. You may need to request an increase in the quota for the number of CPU cores for your subscription (96 cores recommended, for DSv2, DSv3, Dv2, and Dv3 series virtual machines). For more information, read [Standard quota: Increase limits by VM series](https://docs.microsoft.com/azure/azure-portal/supportability/per-vm-quota-requests).
 
 ---
 

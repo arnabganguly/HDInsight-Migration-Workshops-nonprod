@@ -25,7 +25,7 @@ In the *live* Cloudera system the consumer is a Spark application, but for the p
 
 ![The structure of the existing Kafka system running on Cloudera](../Images/1-KafkaSystem.png)
 
-1. On your desktop, open a **Command Prompt** window and sign in to the Cloudera virtual machine. The username is **azureuser***. Replace *\<ip_address`>* with the IP address of the virtual machine.
+1. On your desktop, open a **Command Prompt** window and sign in to the Cloudera virtual machine. Sign in as **azureuser** with the password you specified when you set up the Cloudera virtual machine. Replace *\<ip_address`>* with the IP address of the virtual machine.
 
     ```PowerShell
     ssh azureuser@<ip address>
@@ -300,18 +300,19 @@ In this task, you'll configure peering between the virtual network containing th
 
     | Field | Value|
     |-|-|
-    | Name of the peering from clustervnet to remote virtual network | clustervnet-to-clouderavnet |
+    | This virtual network: Peering link name | clustervnet-to-clouderavnet |
+    | Traffic to remote virtual network | Allow (default) |
+    | Traffic forwarded from remote virtual network | Allow (default) |
+    | Virtual network gateway | None (default) |
+    | remote virtual network: Peering link name | clouderavnet-to-clustervnet |
     | Virtual network deployment model | Resource manager |
     | I know my resource ID | Leave unchecked |
     | Subscription | Select your subscription |
-    | Virtual network | clouderavmvnet-vnet (workshoprg) |
-    | Name of the peering from clouderarg-vnet to clustervnet | clouderavnet-to-clustervnet |
-    | Allow virtual network access from clustervnet to clouderarg-vnet | Enabled |
-    | Allow virtual network access from clouderarg-vnet to clustervnet | Enabled
-    | Allow forwarded traffic from clouderarg-vnet to clustervn | Disabled |
-    | Allow forwarded traffic from clustervnet to clouderarg-vnet | Disabled |
-    | Allow gateway transit | Leave unchecked |
-
+    | Virtual network | clouderavmvnet (workshoprg) |
+    | Traffic to remote virtual network | Allow (default) |
+    | Traffic forwarded from remote virtual network | Allow (default) |
+    | Virtual network gateway | None (default) |
+    
 1. Wait while the network peerings are created.
 
 ### Configure the clusters to support MirrorMaker

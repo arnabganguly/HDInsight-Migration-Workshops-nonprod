@@ -88,7 +88,9 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
         month string,
         dayofmonth string,
         deptime string,
+        depdelay int,
         arrtime string,
+        arrdelay int,
         carrier string,
         flightnum string,
         elapsedtime int,
@@ -143,7 +145,9 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
     |-- month: string (nullable = true)
     |-- dayofmonth: string (nullable = true)
     |-- deptime: string (nullable = true)
+    |-- depdelay: string (nullable = true)
     |-- arrtime: string (nullable = true)
+    |-- arrdelay: string (nullable = true)
     |-- carrier: string (nullable = true)
     |-- flightnum: string (nullable = true)
     |-- elapsedtime: string (nullable = true)
@@ -151,29 +155,30 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
     |-- dest: string (nullable = true)
     |-- distance: string (nullable = true)
 
-    +---------+----+-----+----------+-------+-------+-------+---------+-----------+------+----+--------+
-    |timestamp|year|month|dayofmonth|deptime|arrtime|carrier|flightnum|elapsedtime|origin|dest|distance|
-    +---------+----+-----+----------+-------+-------+-------+---------+-----------+------+----+--------+
-    +---------+----+-----+----------+-------+-------+-------+---------+-----------+------+----+--------+
+    +-------------+------+-----+----------+-------+--------+-------+--------+-------+---------+-----------+------+-----+--------+
+    |    timestamp|  year|month|dayofmonth|deptime|depdelay|arrtime|arrdelay|carrier|flightnum|elapsedtime|origin| dest|distance|
+    +-------------+------+-----+----------+-------+--------+-------+--------+-------+---------+-----------+------+-----+--------+
+    +-------------+------+-----+----------+-------+--------+-------+--------+-------+---------+-----------+------+-----+--------+
 
-    +-------------+------+-----+----------+-------+-------+-------+---------+-----------+------+-----+--------+
-    |    timestamp|  year|month|dayofmonth|deptime|arrtime|carrier|flightnum|elapsedtime|origin| dest|distance|
-    +-------------+------+-----+----------+-------+-------+-------+---------+-----------+------+-----+--------+
-    |1604919325669|"2000"|  "1"|      "19"| "1022"| "1151"|   "DL"|   "1295"|        149| "DFW"|"PHX"|     868|
-    |1604919326170|"2000"|  "1"|      "22"| "1029"| "1207"|   "DL"|   "1295"|        158| "DFW"|"PHX"|     868|
-    |1604919326670|"2000"|  "1"|      "23"| "1017"| "1156"|   "DL"|   "1295"|        159| "DFW"|"PHX"|     868|
-    |1604919327171|"2000"|  "1"|      "29"| "1024"| "1206"|   "DL"|   "1295"|        162| "DFW"|"PHX"|     868|
-    +-------------+------+-----+----------+-------+-------+-------+---------+-----------+------+-----+--------+
+    +-------------+------+-----+----------+-------+--------+-------+--------+-------+---------+-----------+------+-----+--------+
+    |    timestamp|  year|month|dayofmonth|deptime|depdelay|arrtime|arrdelay|carrier|flightnum|elapsedtime|origin| dest|distance|
+    +-------------+------+-----+----------+-------+--------+-------+--------+-------+---------+-----------+------+-----+--------+
+    |1605610024619|"2000"|  "4"|      "20"| "2008"|      43| "2124"|      33|   "DL"|    "871"|         76| "SDF"|"ATL"|     321|
+    |1605610025120|"2000"| "11"|      "23"| "1034"|       4| "1201"|       1|   "DL"|    "546"|         87| "ATL"|"DAY"|     432|
+    +-------------+------+-----+----------+-------+--------+-------+--------+-------+---------+-----------+------+-----+--------+
 
-    +-------------+------+-----+----------+-------+-------+-------+---------+-----------+------+-----+--------+
-    |    timestamp|  year|month|dayofmonth|deptime|arrtime|carrier|flightnum|elapsedtime|origin| dest|distance|
-    +-------------+------+-----+----------+-------+-------+-------+---------+-----------+------+-----+--------+
-    |1604919334682|"2000"|  "1"|      "10"|     NA|     NA|   "HP"|   "2289"|         NA| "DFW"|"PHX"|     868|
-    |1604919335183|"2000"|  "1"|      "13"| "1203"| "1331"|   "HP"|   "2289"|        148| "DFW"|"PHX"|     868|
-    |1604919335683|"2000"|  "1"|      "15"| "1202"| "1329"|   "HP"|   "2289"|        147| "DFW"|"PHX"|     868|
-    +-------------+------+-----+----------+-------+-------+-------+---------+-----------+------+-----+--------+
+    +-------------+------+-----+----------+-------+--------+-------+--------+-------+---------+-----------+------+-----+--------+
+    |    timestamp|  year|month|dayofmonth|deptime|depdelay|arrtime|arrdelay|carrier|flightnum|elapsedtime|origin| dest|distance|
+    +-------------+------+-----+----------+-------+--------+-------+--------+-------+---------+-----------+------+-----+--------+
+    |1605610025621|"2000"|  "5"|      "11"| "1407"|      -8| "2217"|      10|   "UA"|    "132"|        310| "KOA"|"LAX"|    2504|
+    |1605610026121|"2000"| "12"|       "1"|  "758"|       3| "1323"|      -6|   "AA"|   "1584"|        205| "SFO"|"DFW"|    1464|
+    |1605610026622|"2000"|  "9"|       "2"|  "922"|       7| "1014"|       4|   "DL"|    "907"|         52| "PNS"|"BTR"|     236|
+    |1605610027123|"2000"|  "9"|      "21"|  "835"|       5|  "948"|      22|   "AS"|    "468"|         73| "GEG"|"SEA"|     224|
+    +-------------+------+-----+----------+-------+--------+-------+--------+-------+---------+-----------+------+-----+--------+
     ...
     ```
+
+1. Allow the the applications to run for a five minutes, to generate a few hundred records.
 
 1. Press CTRL-C to stop the **SparkConsumer** app, and run the following command to halt the **EventProducer** app:
 
@@ -205,14 +210,19 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
 
     ```text
     ...
-    1604920118839   "2000"  "1"     "15"    "1116"  "1354"  "HP"    "2513"  98      "RNO"   "PHX"   601
-    1604920940380   "2000"  "1"     "11"    "920"   "1130"  "WN"    "1339"  70      "BUR"   "PHX"   369 
-    1604920953896   "2000"  "1"     "24"    NA      NA      "HP"    "2807"  NULL    "BWI"   "PHX"   1999
-    1604920967913   "2000"  "1"     "11"    "732"   "955"   "CO"    "1547"  263     "CLE"   "PHX"   1737
-    1604919954727   "2000"  "1"     "23"    "755"   "948"   "WN"    "456"   53      "ONT"   "PHX"   325
-    1604919955227   "2000"  "1"     "25"    "814"   "1009"  "WN"    "456"   55      "ONT"   "PHX"   325
-    1604920024278   "2000"  "1"     "17"    "1043"  "1331"  "HP"    "777"   228     "ORD"   "PHX"   1440
-    1604920024778   "2000"  "1"     "24"    "1045"  "1325"  "HP"    "777"   220     "ORD"   "PHX"   1440
+    1605531142082   "2000"  "1"     "17"    "626"   0       "732"   -8      "HP"    "2431"  66      "ELP"   "PHX"   347
+    1605531142583   "2000"  "1"     "22"    "624"   -2      "741"   1       "HP"    "2431"  77      "ELP"   "PHX"   347
+    1605531143083   "2000"  "1"     "24"    "626"   0       "731"   -9      "HP"    "2431"  65      "ELP"   "PHX"   347
+    1605531236676   "2000"  "1"     "12"    "707"   62      "836"   46      "HP"    "2763"  149     "IAH"   "PHX"   1009
+    1605531237176   "2000"  "1"     "22"    "632"   27      "825"   35      "HP"    "2763"  173     "IAH"   "PHX"   1009
+    1605531331272   "2000"  "1"     "27"    "953"   -2      "1206"  -1      "HP"    "2454"  73      "LAS"   "PHX"   256
+    1605531331772   "2000"  "1"     "30"    "952"   -3      "1151"  -16     "HP"    "2592"  59      "LAS"   "PHX"   256
+    1605531332273   "2000"  "1"     "1"     "1055"  37      "1312"  47      "HP"    "2612"  77      "LAS"   "PHX"   256
+    1605531307245   "2000"  "1"     "7"     "5"     6       "217"   15      "HP"    "717"   72      "LAS"   "PHX"   256
+    1605531307746   "2000"  "1"     "10"    "2358"  -1      "159"   -3      "HP"    "717"   61      "LAS"   "PHX"   256
+    1605531308246   "2000"  "1"     "12"    NA      NULL    NA      NULL    "HP"    "717"   NULL    "LAS"   "PHX"   256
+    1605531059483   "2000"  "1"     "21"    "657"   -3      "841"   10      "AA"    "1315"  164     "DFW"   "PHX"   868
+    ...
     Time taken: 0.076 seconds, Fetched: 865 row(s)
     ```
 
@@ -236,7 +246,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
 1. On the Azure Home page, select **Create a resource**.
 
-1. On the **New** page, in the **Search the Marketplace** box, type **SQL Database HDInsight**, and then press Enter.
+1. On the **New** page, in the **Search the Marketplace** box, type **SQL Database**, and then press Enter.
 
 1. On the **SQL Database** page, select **Create**.
 
@@ -293,10 +303,11 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     |-|-|
     | Primary storage type | Azure Data Lake Storage Gen2 |
     | Primary storage account | Select the storage account you previously created for the Kafka cluster (**clusterstorage*9999***)|
-    | Container | Reuse the same container that you created for the Kafka cluster (**cluster*9999***) |
+    | Filesystem | Reuse the same container that you created for the Kafka cluster (**cluster*9999***) |
+    | Identity | clustermanagedid |
     | SQL database for Ambari | leave blank |
     | SQL database for Hive | hiveserver*9999*/hivedb*9999* |
-    | Authenticate SQL Database | Select **Authenticate**. On the **Authenticate** page, enter **azuresa** for the username, provide the password you created for this user in the database, and then click **Test Connection**. You should receive a warning informing you that Azure couldn't currently validate the database credentials, but that you can proceed (if you provided invalid credentials, you'll see an error message rather than a warning). Click **Select** to finish.
+    | Authenticate SQL Database | Select **Authenticate**. On the **Authenticate** page, enter **azuresa** for the username, provide the password you created for this user in the database, and then click **Test Connection**. You should receive a warning informing you that Azure couldn't currently validate the database credentials, but that you can proceed. Click **Select** to finish.
     | SQL database for Ooozie | leave blank |
 
 1. On the **Security + networking** tab, enter the following settings, and then select **Next: Configuration + pricing**
