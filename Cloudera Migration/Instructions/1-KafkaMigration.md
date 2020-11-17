@@ -381,6 +381,8 @@ In this task, you'll configure peering between the virtual network containing th
     ff02::2 ip6-allrouters
     ff02::3 ip6-allhosts
 
+    10.10.0.4 onprem.internal.cloudapp.net onprem
+
     # Entries for worker nodes
     10.3.0.14 wn0-kafkac
     10.3.0.13 wn1-kafkac

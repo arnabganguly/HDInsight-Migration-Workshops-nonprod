@@ -240,7 +240,7 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
 
 In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll reuse the existing virtual infrastructure (storage account and network) from the Kafka cluster you created in the previous exercise. You'll create a custom Hive metadata database using Azure SQL Database. This will enable you to share the Hive metadata with other other HDInsight clusters that need to access the Hive database.
 
-<img alt="The virtual infrastructure required by te HDInsight Kafka cluster" src="../Images/2-HDInsightHive.png" width=60%>
+<img alt="The structure of the HDInsight LLAP cluster" src="../Images/2-HDInsightHive.png" width=60%>
 
 ### Create the SQL database
 
@@ -307,7 +307,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     | Identity | clustermanagedid |
     | SQL database for Ambari | leave blank |
     | SQL database for Hive | hiveserver*9999*/hivedb*9999* |
-    | Authenticate SQL Database | Select **Authenticate**. On the **Authenticate** page, enter **azuresa** for the username, provide the password you created for this user in the database, and then click **Test Connection**. You should receive a warning informing you that Azure couldn't currently validate the database credentials, but that you can proceed. Click **Select** to finish.
+    | Authenticate SQL Database | Select **Authenticate**. On the **Authenticate** page, enter **azuresa** for the username, provide the password you created for this user in the database, and then click **Test Connection**. You might receive a warning informing you that Azure couldn't currently validate the database credentials, but that you can proceed. Click **Select** to finish.
     | SQL database for Ooozie | leave blank |
 
 1. On the **Security + networking** tab, enter the following settings, and then select **Next: Configuration + pricing**
@@ -338,7 +338,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
 1. On the **Overview** page for the cluster, under **Dashboards**, select **Ambari home**.
 
-1. Sign in to Ambari as **admin** with password **Pa55w.rdDemo** when prompted. The Ambari page should show that the cluster is running the HDFS, Hive, and Zookeeper services (amongst others).:
+1. Sign in to Ambari as **admin** with password **Pa55w.rdDemo** when prompted. The Ambari page should show that the cluster is running the HDFS, Hive, and Zookeeper services (amongst others):
 
     ![The Ambari home page, showing the running services for the Hive cluster.](../Images/2-Ambari-Home.png)
 
@@ -374,6 +374,8 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     ff02::1 ip6-allnodes
     ff02::2 ip6-allrouters
     ff02::3 ip6-allhosts
+
+    10.10.0.4 onprem.internal.cloudapp.net onprem
 
     # Entries for worker nodes
     10.3.0.11 wn0-llapcl
@@ -418,6 +420,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     ```bash
     sudo bash
     ```
+
 1. Edit the file **/etc/hosts**, and add an entry for the Cloudera virtual machine. You noted the IP address of the Cloudera virtual machine earlier. The virtual machine has the name **onprem**, with the FQDN of **onprem.internal.cloudapp.net**. The file below shows an example, using the IP address 10.10.0.4:
 
     ```text
@@ -499,7 +502,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     ```sql
     CREATE TABLE todaysinfo LIKE flightinfo;
     ```
-    
+
 1. Copy the data up to the point in time noted earlier to the **todaysinfo** table. Replace **\<value\>** with the value returned by the previous query:
 
     ```sql
@@ -512,6 +515,12 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
     ```sql
     export table todaysinfo to 'exports/todaysinfo';
+    ```
+
+1. Quit the hive utility:
+
+    ```sql
+    exit;
     ```
 
 1. Run the following **DistCp** command to copy the exported data in the **exports** directory in HDFS to the **staging** directory in the HDInsight cluster. Replace **\<key\>** with the key for the storage account used by the HDInsight cluster, and replace **\<9999\>** with the numeric suffix for your storage account:
@@ -556,6 +565,40 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
     ---
 
+1. Create the **flightinfo** table:
+
+    ```sql
+    CREATE TABLE IF NOT EXISTS flightinfo ( 
+        `timestamp` string,
+        year string,
+        month string,
+        dayofmonth string,
+        deptime string,
+        depdelay int,
+        arrtime string,
+        arrdelay int,
+        carrier string,
+        flightnum string,
+        elapsedtime int,
+        origin string,
+        dest string,
+        distance int)
+    COMMENT 'Flight information'
+    CLUSTERED BY (flightnum) INTO 10 BUCKETS
+    ROW FORMAT DELIMITED
+    FIELDS TERMINATED BY '\t'
+    STORED AS ORC
+    TBLPROPERTIES('transactional'='true');
+    ```
+
+    ---
+
+    **NOTE:**
+
+    The name of the **timestamp** column is enclosed between backquote characters. This is because timestamp is a reserved word in the version of Hive implemented by the HDInsight cluster.
+
+    ---
+
 1. Import the data for the **flightinfo** table from the **staging** folder:
 
     ```sql
@@ -565,7 +608,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 1. Disconnect from **beeline**:
 
     ```sql
-    exit;
+    !quit
     ```
 
 ## Task 4: Verify that the transfer was successful
@@ -591,7 +634,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     1. Using hive on the Cloudera cluster, run the following query to find the timestamp for the most recent change:
 
         ```sql
-        SELECT MAX(timestamp) FROM flightinfo;
+        SELECT MAX(`timestamp`) FROM flightinfo;
         ```
     
     1. Remove and recreate the **todaysinfo** table:
@@ -606,8 +649,8 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
         ```sql
         INSERT INTO todaysinfo
         SELECT * FROM flightinfo
-        WHERE timestamp > '<previous_timestamp>' AND
-              timestamp <= '<lastest_timestamp>';
+        WHERE `timestamp` > '<previous_timestamp>' AND
+              `timestamp` <= '<lastest_timestamp>';
         ```
 
     1. Export the **todaysinfo** table.
@@ -628,4 +671,10 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
     ---
 
-Leave the HDInsight Hive cluster running; you'll use it in the next exercise.
+## Task 5: Tidy up
+
+1. In the Azure portal, go to the page for the HDInsight Hive cluster.
+
+1. In the command bar, select **Delete**.
+
+1. In the confirmation pane, enter the name of the cluster, and then select **Delete**.

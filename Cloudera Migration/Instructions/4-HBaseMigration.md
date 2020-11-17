@@ -711,6 +711,6 @@ The operations described in this task assume that the data in the HBase database
 
 1. In the Azure portal, go to the page for the HDInsight HBase cluster.
 
-1. In the command bar, select **Delete**:
+1. In the command bar, select **Delete**.
 
 1. In the confirmation pane, enter the name of the cluster, and then select **Delete**.
