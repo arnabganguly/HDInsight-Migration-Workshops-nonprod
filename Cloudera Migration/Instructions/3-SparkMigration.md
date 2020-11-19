@@ -7,7 +7,6 @@ In this exercise, you'll migrate a Spark workload from Cloudera to HDInsight. Yo
 - Examine the existing Spark workload running on Cloudera. The workload runs inside a Jupyter notebook.
 - Create an HDInsight Spark cluster.
 - Migrate the notebook and data for the Spark workload to the HDInsight cluster.
-- Optimize the code in the notebook for HDInsight.
 - Test the Spark workload on the HDInsight cluster.
 
 At the end of this process, the Spark applications will run on the HDInsight cluster, and retrieve data from the HDInsight cluster you created in the previous exercise.
@@ -414,7 +413,8 @@ In this task, you'll transfer the data and recreate the **airportdata** external
     ROW FORMAT DELIMITED
     FIELDS TERMINATED BY ','
     STORED AS TEXTFILE
-    LOCATION '/airportdata';
+    LOCATION '/airportdata'
+    TBLPROPERTIES('skip.header.line.count'='1');
     ```
 
 1. Query the number of rows in the table to verify that it has been created successfully:
@@ -438,6 +438,7 @@ In this task, you'll transfer the data and recreate the **airportdata** external
     ```sql
     !quit
     ```
+
 ### Transfer the FlightStats Jupyter notebook
 
 1. Switch back to the SSH session running on the Cloudera virtual machine.
@@ -468,17 +469,57 @@ In this task, you'll transfer the data and recreate the **airportdata** external
 
     ![The Jupyter home page for the HDInsight Spark cluster.](../Images/3-Jupyter-Home.png)
 
+
+## Task 4: Test the workload
+
+---
+
+**NOTE:**
+
+By default, Spark running on an HDInsight cluster connects to its own local instance of Hive. The databases for this instance are located under the **/apps/spark/warehouse** directory in cluster storage. A Hive LLAP cluster runs as a separate, optimized and tuned instance of Hive. The data for a Hive LLAP cluster is stored under the **/hive/warehouse** directory in cluster storage. These distinct stores can make interoperability between Spark and Hive challenging. To enable Spark to read the tables created by an LLAP cluster, you can use the following approaches:
+
+1. Connect to the LLAP cluster from a Spark application using the Hive Warehouse Connector (HWC). This is the preferred option, and is **the strategy you should adopt in a production environment**. However, the HWC requires that the LLAP cluster is available. You cannot use the HWC if no LLAP processes are running, even if the data is stored in the same cluster storage used by the Spark cluster. In this lab, to save resources, the LLAP cluster and the Spark cluster are not running concurrently, so you cannot use this mechanism. For more information on using the HWC with HDInsight, see [Integrate Apache Spark and Apache Hive with Hive Warehouse Connector in Azure HDInsight](https://docs.microsoft.com/azure/hdinsight/interactive-query/apache-hive-warehouse-connector).
+
+1. Modify the code in the notebook to connect to the Hive database using JDBC. This is the approach that the **beeline** utility uses. However, this approach necessitates changing the way in which the notebook establishes the **SQLContext** object used to perform queries.
+
+1. Modify the Spark configuration used by the notebook to query tables in the **/hive/warehouse** directory. This is the simplest approach for this exercise. It has one drawback; Spark cannot retrieve data from transactional tables as it doesn't understand the file format used by these tables. In this exercise, the **flightinfo** table is non-transactional, and the **airportdata** table is external, and also non-transactional, so the notebook should still work correctly.
+
+---
+
+1. Return to the Jupyter page for the HDInsight Spark cluster.
+
 1. Select the **FlightStats.ipynb** notebook.
 
 1. When the notebook opens, it will prompt you for the kernel to use. Select the **PySpark3** kernel, and then select **OK**.
 
     ![The **Kernel not found** page for the notebook. The user has selected the PySpark3 kernel](../Images/3-Jupyter-Kernel.png)
 
+1. Click the first cell.
 
-## Task 4: Optimize the notebook for HDInsight
+1. In the menu bar, select **Insert**, and then select **Insert Cell Above**:
 
-In this task, you'll modify te code in the workbook to take advantage of the features available with Jupyter notebooks on HDInsight.
+    ![The **Insert** menu. The user has selected **Insert Cell Above**](../Images/3-Jupyter-Insert-Cell.png)
 
+1. In the new cell, add the following code:
+
+    ```text
+    %%configure 
+    { "conf": {"spark.hadoop.metastore.catalog.default": "hive" }}
+    ```
+
+    This code configures the Spark session to use the tables in the **hive** catalog (the **/hive/warehouse** directory in cluster storage) rather than the default **spark** catalog.
+
+1. On the **Cell** menu, select **Run All**. Verify that the notebook runs as before, and generates the same reports.
+
+    ---
+
+    **NOTE:**
+
+    You will see additional messages showing the progress of the Spark jobs as they run. This is due to the way in which Jupyter notebooks are configured with HDInsight.
+
+    ---
+
+     ![The notebook running on the HDInsight Spark cluster](../Images/3-Jupyter-Results2.png)
 
 ## Task 5: Tidy up
 

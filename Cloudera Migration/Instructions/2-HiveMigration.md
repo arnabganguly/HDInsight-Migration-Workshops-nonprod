@@ -464,6 +464,21 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
     ---
 
+### Disable strict mode for managed tables in Hive
+
+By default, the Hive LLAP server is configured to enforce *strict* mode for managed tables. This means that all tables must be transactional. Sometimes this approach can be less than optimal for read-heavy tables with few (if any) updates and deletes. The **flightinfo** table is an example of this type of table; rows are continually appended, but the data is historical and once added it doesn't change. In this task, you'll disable *strict* mode. You can still create transactional tables, but they are not enforced.
+
+1. Switch back to Ambari for the HDInsight cluster.
+
+1. In the left-hand pane, select **Hive**. In the main pane, on the **CONFIGS** tab, in the search box, enter **strict**. 
+
+1. Under **Advanced hive-interactive-site** and **Advanced hive-site**, change the **hive.strict.managed.tables** setting to **false**:
+
+    ![The **CONFIGS** page for Hive in Ambari. The user has disabled strict mode for managed tables.](../Images/2-Ambari-Hive-Config.png)
+
+1. Select **Save**, select **RESTART**, and then select **Restart All Affected**. 
+
+1. In the **Confirmation** dialog box, select **CONFIRM RESTART ALL**, and Wait for the services to restart before continuing.
 ## Task 3: Copy data from the Cloudera cluster to the HDInsight LLAP cluster
 
 1.  In the Azure portal, open a Cloud Shell prompt running PowerShell.
@@ -565,7 +580,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
     ---
 
-1. Create the **flightinfo** table:
+1. Create the **flightinfo** table. Make sure that you set the **transactional** table property to **false**:
 
     ```sql
     CREATE TABLE IF NOT EXISTS flightinfo ( 
@@ -588,7 +603,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     ROW FORMAT DELIMITED
     FIELDS TERMINATED BY '\t'
     STORED AS ORC
-    TBLPROPERTIES('transactional'='true');
+    TBLPROPERTIES('transactional'='false');
     ```
 
     ---
