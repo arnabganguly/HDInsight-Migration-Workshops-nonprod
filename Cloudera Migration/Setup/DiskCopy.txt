@@ -1,7 +1,7 @@
-$sourceRG = 'workshoprg2'
-$sourceDiskName = 'clouderadiskForSpark'
-$targetDiskName = 'clouderadiskForJupyter'
-$targetRG = 'clouderarg'
+$sourceRG = 'clouderarg'
+$sourceDiskName = 'clouderadisk'
+$targetDiskName = 'clouderadisk'
+$targetRG = 'workshoprg'
 
 
 $targetLocate = 'eastus'
