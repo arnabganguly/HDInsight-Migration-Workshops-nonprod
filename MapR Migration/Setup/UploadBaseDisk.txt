@@ -1,0 +1,37 @@
+$sourceDiskSAS = 'https://md-p1zw3rbwcgnn.blob.core.windows.net/ncgcbf0s4nn1/abcd?sv=2018-03-28&sr=b&si=5ef4f053-b2d8-4cb7-ae4a-e9a8408fe183&sig=Ez313XrllPqw3w3dDGSWzlsCUX1le%2BCkKe5GFxZUXj0%3D'
+$subscriptionId = 'ae1315c1-f9ff-495b-92a5-697a0e3d62b5'
+
+$targetRG = 'clouderarg'
+$targetLocation = 'eastus'
+$targetOS = 'Linux'
+$osDiskName = 'clouderadisk'
+$vhdSizeBytes = 68719477248
+
+Select-AzSubscription -SubscriptionId $SubscriptionId
+New-AzResourceGroup -Name $targetRG -Location $targetLocation
+
+
+$targetDiskConfig = New-AzDiskConfig `
+    -SkuName 'Standard_LRS' `
+    -osType 'Linux' `
+    -UploadSizeInBytes $vhdSizeBytes `
+    -Location $targetLocation `
+    -CreateOption 'Upload'
+
+$targetDisk = New-AzDisk -ResourceGroupName $targetRG `
+    -DiskName $osDiskName `
+    -Disk $targetDiskConfig
+
+$targetDiskSas = Grant-AzDiskAccess -ResourceGroupName $targetRG `
+    -DiskName $osDiskName `
+    -DurationInSecond 86400 -Access 'Write'
+
+azcopy copy $sourceDiskSAS $targetDiskSas.AccessSAS `
+    --blob-type PageBlob
+
+Revoke-AzDiskAccess -ResourceGroupName $targetRG `
+    -DiskName $osDiskName
+   
+$disk = Get-AzDisk `
+    -ResourceGroupName $targetRG `
+    -DiskName $osDiskName

@@ -55,22 +55,71 @@ Perform the following tasks:
 
     ![The Cloud Shell dropdown. The user has selected **PowerShell**.](../Images/0-PowerShell.png)
 
-1. Run the following commands to set up the parameters and configuration settings for the Contoso virtual machine and its associated resources. Replace *\<your-subscription-id\*> with the subscription ID you noted previously. You should also change the *location* variable to match your nearest Azure region.
+1. Run the commands shown below to create the managed disk used by the virtual machine that will be used to run Cloudera. The script creates the managed disk from a pre-created image. Replace *\<your-subscription-id\>* with the subscription ID you noted previously, and set *\<SAS\>* to the SAS token for the pre-created image (your instructor will provide this URL). You should also change the *location* variable to match your nearest Azure region:
 
     ```PowerShell
     #Provide the subscription Id
     $subscriptionId = '<your-subscription-id>'
 
-    #Provide the name of your resource group
-    $resourceGroupName = 'workshoprg'
-
-    #Provide the name of the resource group holding the snapshot on which the VM is based
-    $diskResourceGroupName = 'clouderarg'
-    
     #Specify the location for creating resources
     $location = "East US"
 
-    # TBD: THIS WILL HAVE TO BE STORED SOMEWHERE ACCESSIBLE TO STUDENTS
+    #SAS URL of pre-created image
+    $sourceDiskSAS = '<SAS>'    
+
+    $targetRG = 'clouderarg'
+    $targetLocation = $location
+    $targetOS = 'Linux'
+    $osDiskName = 'clouderadisk'
+    $vhdSizeBytes = 68719477248
+
+    #Create a resource group (clouderarg) for holding the managed disk
+    Select-AzSubscription -SubscriptionId $SubscriptionId
+    New-AzResourceGroup -Name $targetRG -Location $targetLocation
+
+    # Create the managed disk
+    $targetDiskConfig = New-AzDiskConfig `
+        -SkuName 'Standard_LRS' `
+        -osType 'Linux' `
+        -UploadSizeInBytes $vhdSizeBytes `
+        -Location $targetLocation `
+        -CreateOption 'Upload'
+
+    $targetDisk = New-AzDisk -ResourceGroupName $targetRG `
+        -DiskName $osDiskName `
+        -Disk $targetDiskConfig
+
+    $targetDiskSas = Grant-AzDiskAccess -ResourceGroupName $targetRG `
+        -DiskName $osDiskName `
+        -DurationInSecond 86400 -Access 'Write'
+
+    #Copy the contents of the pre-created disk to the managed disk
+    azcopy copy $sourceDiskSAS $targetDiskSas.AccessSAS `
+        --blob-type PageBlob
+
+    Revoke-AzDiskAccess -ResourceGroupName $targetRG `
+        -DiskName $osDiskName
+    ```
+
+    ---
+
+    **NOTE**
+
+    The Cloudera virtual machine created in the following steps uses its own managed disk based on a copy of the disk you have just created. If you need to rebuild or reset the virtual machine at any point, you can start at the following step. You don't need to copy the disk from the SAS URL again.
+
+    ---
+
+1. Run the following commands to set up the parameters and configuration settings for the Contoso virtual machine and its associated resources. 
+
+    ```PowerShell
+    #Provide the name of your resource group
+    $resourceGroupName = 'workshoprg'
+
+    #Provide the name of the resource group and name of the the managed disk 
+    # on which the VM is based.
+    #These steps assume that the student hasn't modified the values for the 
+    # resource group or disk name in the previous step
+    $diskResourceGroupName = 'clouderarg'
     $sourceDiskName = 'clouderadisk'
 
     #Provide the name of the OS disk that will be created using the snapshot

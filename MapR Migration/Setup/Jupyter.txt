@@ -1,0 +1,39 @@
+sudo ln -sf /usr/bin/python3.6 /usr/bin/python
+sudo apt install python3-pip
+
+sudo pip3 install --upgrade pip
+
+sudo apt-get -y install ipython3
+sudo apt-get -y install jupyter-notebook
+
+sudo pip3 install jupyter
+sudo pip3 install sparksql-magic
+#sudo pip3 install sparkmagic
+sudo pip3 install matplotlib
+
+sudo jupyter nbextension enable --py --sys-prefix widgetsnbextension
+# sudo jupyter serverextension enable --py sparkmagic
+
+#sudo jupyter-kernelspec install /usr/local/lib/python3.6/site-packages/sparkmagic/kernels/sparkkernel
+#sudo jupyter-kernelspec install /usr/local/lib/python3.6/site-packages/sparkmagic/kernels/pysparkkernel
+#sudo jupyter-kernelspec install /usr/local/lib/python3.6/site-packages/sparkmagic/kernels/wrapperkernel
+#sudo jupyter-kernelspec install /usr/local/lib/python3.6/site-packages/sparkmagic/kernels/sparkrkernel
+
+sudo pip3 install pysqlite3
+
+jupyter notebook --generate-config
+# Copy config files from jupyterconfig folder to .jupyter to enable remote access
+
+sudo chown azureuser:azureuser ~/.local/share
+sudo chown azureuser:azureuser ~/.local/share/jupyter
+
+jupyter notebook --generate-config
+# Copy config files from jupyterconfig folder to .jupyter to enable remote access
+
+export PYSPARK_DRIVER_PYTHON="jupyter"
+export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
+#export PYSPARK_PYTHON=python3
+export SPARK_HOME=/opt/mapr/spark/spark-2.4.4
+
+pyspark # --driver-cores 2 --executor-memory 512m
+#jupyter notebook

@@ -1,0 +1,2 @@
+
+https://support.datafabric.hpe.com/s/article/How-to-create-Install-Trusted-Self-Signed-Certificates-in-a-MapR-cluster?language=en_US

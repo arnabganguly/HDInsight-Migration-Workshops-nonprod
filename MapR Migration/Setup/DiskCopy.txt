@@ -1,15 +1,15 @@
-$sourceRG = 'workshoprg2'
-$sourceDiskName = 'clouderadiskForSpark'
-$targetDiskName = 'clouderadiskForJupyter'
-$targetRG = 'clouderarg'
+$sourceRG = 'maprrg'
+$sourceDiskName = 'OSDisk_Before_MapR'
+$targetDiskName = 'onpremOSDisk'
+$targetRG = 'maprrg'
 
 
-$targetLocate = 'eastus'
+$TargetLocatione = 'eastus'
 $targetOS = 'Linux'
 
 $sourceDisk = Get-AzDisk -ResourceGroupName $sourceRG -DiskName $sourceDiskName
 
-$targetDiskconfig = New-AzDiskConfig -SkuName 'Standard_LRS' -osType $targetOS -UploadSizeInBytes $($sourceDisk.DiskSizeBytes + 512) -Location $targetLocate -CreateOption 'Upload'
+$targetDiskconfig = New-AzDiskConfig -SkuName 'Standard_LRS' -osType $targetOS -UploadSizeInBytes $($sourceDisk.DiskSizeBytes + 512) -Location $TargetLocatione -CreateOption 'Upload'
 
 $targetDisk = New-AzDisk -ResourceGroupName $targetRG -DiskName $targetDiskName -Disk $targetDiskconfig
 

@@ -1,0 +1,12 @@
+
+https://package.mapr.com/releases/installer-v1.12.0/
+
+maprlogin password -user <your username> -cluster <your cluster name>
+
+maprlogin password -user azureuser -cluster onprem.internal.cloudapp.net
+
+
+https://md-p1zw3rbwcgnn.blob.core.windows.net/ncgcbf0s4nn1/abcd?sv=2018-03-28&sr=b&si=5ef4f053-b2d8-4cb7-ae4a-e9a8408fe183&sig=Ez313XrllPqw3w3dDGSWzlsCUX1le%2BCkKe5GFxZUXj0%3D
+
+
+

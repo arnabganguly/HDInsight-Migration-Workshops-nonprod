@@ -7,7 +7,7 @@ sudo apt-get install libsqlite3-dev
 wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz
 tar -xvf Python-3.6.3.tgz
 cd Python-3.6.3
-sudo ./configure --enable-loadable-sqlite-extensions --enable-optimizations
+sudo ./configure --enable-loadable-sqlite-extensions --enable-optimizations --enable-shared
 sudo make -j8
 sudo make install
 sudo ln -sf /usr/local/bin/python3 /usr/bin/python
@@ -30,11 +30,11 @@ sudo jupyter-kernelspec install /usr/local/lib/python3.6/site-packages/sparkmagi
 
 sudo pip3 install pysqlite3
 
-sudo chown azureuser:azureuser ~/.local/share
-sudo chown azureuser:azureuser ~/.local/share/jupyter
-
 jupyter notebook --generate-config
 # Copy config files from jupyterconfig folder to .jupyter to enable remote access
+
+sudo chown azureuser:azureuser ~/.local/share
+sudo chown azureuser:azureuser ~/.local/share/jupyter
 
 export PYSPARK_DRIVER_PYTHON="jupyter"
 export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
