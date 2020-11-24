@@ -1,13 +1,89 @@
+
+Apply patch mapr-patch-6.1.0.20180926230239.GA-20201110100359.x86_64.deb
+(test Spark Streaming Consumer afterwards)
+
+---
+
+Update Kafka consumer and producer JARs (Consumer.jar and EventProducer.jar in C:\users\user\downloads)
+
+---
+
+edit /opt/mapr/kafka/kafka-1.1.1/config/server.properties
+
+delete.topic.enable=true
+
+---
+
+create /etc/systemd/system/kafka.service
+
+[Unit]
+Description=kafka startup script
+
+[Service]
+ExecStart=/etc/kafkastart.sh
+
+[Install]
+WantedBy=multi-user.target
+
+---
+
+create /etc/kafkastart.sh
+
+#!/bin/bash
+/opt/mapr/kafka/kafka-1.1.1/bin/kafka-server-start.sh /opt/mapr/kafka/kafka-1.1.1/config/server.properties > /tmp/kafka-server.log 2>&1
+
+---
+
+chmod +x /etc/kafkastart.sh
+systemctl enable kafka
+
+---
+
 edit /etc/profile
 
 export KAFKA_HOME=/opt/mapr/kafka/kafka-1.1.1
-export PATH=${PATH}:${KAFKA_HOME}/bin
-
+export HADOOP_HOME=/opt/mapr/hadoop/hadoop-2.7.0
+export PATH=${PATH}:${KAFKA_HOME}/bin:${HADOOP_HOME}/bin:${SPARK_HOME}/bin
 
 ----
+
+edit .profile for azureuser
+
+export SPARK_HOME=/opt/mapr/spark/spark-2.4.4
+export PYSPARK_DRIVER_PYTHON="jupyter"
+export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
+export PATH=${PATH}:${SPARK_HOME}/bin
+---
 
 edit $KAFKA_HOME/config/server.properties
 
 zookeeper.connect=localhost:5181
 
 ---
+
+sudo -u mapr bash
+/opt/mapr/hadoop/hadoop-2.7.0/bin/hdfs dfs -mkdir /user/azure
+/opt/mapr/hadoop/hadoop-2.7.0/bin/hdfs dfs -chown azureuser:azureuser /user/azure
+
+---
+
+edit /opt/mapr/spark/spark-2.4.4/conf/hive-site.xml
+
+edit /opt/mapr/hive/hive-2.3/conf/hive-site.xml
+
+  <property>
+    <name>hive.support.concurrency</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>hive.enforce.bucketing</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>hive.exec.dynamic.partition.mode</name>
+    <value>nonstrict</value>
+  </property>
+  <property>
+    <name>hive.txn.manager</name>
+    <value>org.apache.hadoop.hive.ql.lockmgr.DbTxnManager</value>
+  </property>

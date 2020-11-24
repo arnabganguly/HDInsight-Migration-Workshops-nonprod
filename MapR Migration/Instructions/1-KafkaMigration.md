@@ -2,15 +2,15 @@
 
 ## Introduction
 
-In this exercise, you'll migrate a Kafka workload from Cloudera to HDInsight. You'll perform the following tasks:
+In this exercise, you'll migrate a Kafka workload from MapR to HDInsight. You'll perform the following tasks:
 
-- Examine the existing Kafka workload running on Cloudera, including the Kafka producer and consumer applications.
+- Examine the existing Kafka workload running on MapR, including the Kafka producer and consumer applications.
 - Create the virtual infrastructure for an HDInsight Kafka cluster, and then create the cluster.
-- Configure MirrorMaker to replicate topics on the Cloudera cluster to the HDInsight cluster.
+- Configure MirrorMaker to replicate topics on the MapR cluster to the HDInsight cluster.
 - Reconfigure the Kafka consumer application to receive messages from Kafka running on the HDInsight cluster.
 - Reconfigure the Kafka producer application to post messages to Kafka running on the HDInsight cluster.
 
-At the end of this process, all incoming data will be received and processed through the Kafka cluster on HDInsight, and the corresponding functionality in the Cloudera cluster can be retired.
+At the end of this process, all incoming data will be received and processed through the Kafka cluster on HDInsight, and the corresponding functionality in the MapR cluster can be retired.
 
 ## Task 1: Run the existing Kafka workload
 
@@ -19,13 +19,13 @@ The existing Kafka workload receives incoming data about airports, flights, dela
 ---
 
 **NOTE:**
-In the *live* Cloudera system the consumer is a Spark application, but for the purposes of this exercise, you'll run a Scala application that simply retrieves and displays the messages from the Kafka topics. Additionally, in this exercise, the Kafka producer simulates receiving data by reading it from a CSV file.
+In the *live* MapR system the consumer is a Spark application, but for the purposes of this exercise, you'll run a Scala application that simply retrieves and displays the messages from the Kafka topics. Additionally, in this exercise, the Kafka producer simulates receiving data by reading it from a CSV file.
 
 ---
 
-![The structure of the existing Kafka system running on Cloudera](../Images/1-KafkaSystem.png)
+![The structure of the existing Kafka system running on MapR](../Images/1-KafkaSystem.png)
 
-1. On your desktop, open a **Command Prompt** window and sign in to the Cloudera virtual machine. Sign in as **azureuser** with the password you specified when you set up the Cloudera virtual machine. Replace *\<ip_address`>* with the IP address of the virtual machine.
+1. On your desktop, open a **Command Prompt** window and sign in to the MapR virtual machine. Sign in as **azureuser** with the password you specified when you set up the MapR virtual machine. Replace *\<ip_address`>* with the IP address of the virtual machine.
 
     ```PowerShell
     ssh azureuser@<ip address>
@@ -34,8 +34,8 @@ In the *live* Cloudera system the consumer is a Spark application, but for the p
 1. Create a new Kafka topic named **flights**. The producer capturing the flight data will post messages to this topic. This is only a single node cluster, so set the **replication-factor** to 1. Also, set the number of partitions to 1, to minimize resource utilization for this constrained environment:
 
     ```bash
-    kafka-topics --create \
-      --zookeeper onprem:2181 \
+    kafka-topics.sh --create \
+      --zookeeper onprem:5181 \
       --replication-factor 1 \
       --partitions 1 \
       --topic flights
@@ -113,7 +113,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
     ![The Resource Groups icon on the Home page in the Azure portal](../Images/1-Home-Page.png)
 
-1. On the **Create a resource group** page,  select the same subscription and region that you used to create the Cloudera virtual machine. Name the resource group **clusterrg**, and then select **Review + create**.
+1. On the **Create a resource group** page,  select the same subscription and region that you used to create the MapR virtual machine. Name the resource group **clusterrg**, and then select **Review + create**.
 
 1. On the validation page, select **Create**, and wait while the resource group is created.
 
@@ -132,7 +132,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     | Subscription | Select your subscription |
     | Resource group | clusterrg |
     | Name | clustervnet |
-    | Region | Select the same region used by the Cloudera virtual machine and the **clusterrg** resource group |
+    | Region | Select the same region used by the MapR virtual machine and the **clusterrg** resource group |
 
 
 1. On the **IP Addresses** tab, enter the following settings, and then select **Review + create**:
@@ -162,7 +162,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     | Subscription | Select your subscription |
     | Resource group | clusterrg |
     | Storage account name | clusterstorage*nnnn*, where *nnnn* is a random four digit number you select to avoid clashing with other storage accounts |
-    | Location | Select the same region used by the Cloudera virtual machine and the **clusterrg** resource group |
+    | Location | Select the same region used by the MapR virtual machine and the **clusterrg** resource group |
     | Performance | Standard |
     | Account Kind | StorageV2 (general purpose v2) |
     | Replication | Zone-redundant storage (ZRS) |
@@ -189,7 +189,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     |-|-|
     | Subscription | Select your subscription |
     | Resource group | clusterrg |
-    | Region | Select the same region used by the Cloudera virtual machine and the **clusterrg** resource group |
+    | Region | Select the same region used by the MapR virtual machine and the **clusterrg** resource group |
     | Name | clustermanagedid |
 
 1. On the validation page, select **Create**, and wait while the user assigned managed identity is created.
@@ -233,7 +233,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     | Subscription | Select your subscription |
     | Resource group | clusterrg |
     | Cluster name | kafkacluster*nnnn*, where *nnnn* is the same random four digit number you selected when you created the storage account (if necessary, you can use a different number, but for consistency try and reuse the same value if possible) |
-    | Region | Select the same region used by the Cloudera virtual machine and the **clusterrg** resource group |
+    | Region | Select the same region used by the MapR virtual machine and the **clusterrg** resource group |
     | Cluster type | Kafka |
     | Version | Kafka 2.1.1 (HDI 4.0) |
     | Cluster login name | admin |
@@ -278,9 +278,9 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
 ## Task 3: Configure MirrorMaker to replicate topics
 
-In this task, you'll configure peering between the virtual network containing the Cloudera cluster and the virtual network for the HDInsight Kafka cluster. You'll then use MirrorMaker to replicate Kafka topics from the Cloudera cluster to the HDInsight cluster:
+In this task, you'll configure peering between the virtual network containing the MapR cluster and the virtual network for the HDInsight Kafka cluster. You'll then use MirrorMaker to replicate Kafka topics from the MapR cluster to the HDInsight cluster:
 
-![Kafka on Cloudera replicating data to the HDInsight cluster using MirrorMaker](../Images/1-MirrorMaker.png)
+![Kafka on MapR replicating data to the HDInsight cluster using MirrorMaker](../Images/1-MirrorMaker.png)
 
 ### Peer the virtual networks
 
@@ -300,15 +300,15 @@ In this task, you'll configure peering between the virtual network containing th
 
     | Field | Value|
     |-|-|
-    | This virtual network: Peering link name | clustervnet-to-clouderavnet |
+    | This virtual network: Peering link name | clustervnet-to-MapRvnet |
     | Traffic to remote virtual network | Allow (default) |
     | Traffic forwarded from remote virtual network | Allow (default) |
     | Virtual network gateway | None (default) |
-    | remote virtual network: Peering link name | clouderavnet-to-clustervnet |
+    | remote virtual network: Peering link name | maprvnet-to-clustervnet |
     | Virtual network deployment model | Resource manager |
     | I know my resource ID | Leave unchecked |
     | Subscription | Select your subscription |
-    | Virtual network | clouderavmvnet (workshoprg) |
+    | Virtual network | maprvmvnet (workshoprg) |
     | Traffic to remote virtual network | Allow (default) |
     | Traffic forwarded from remote virtual network | Allow (default) |
     | Virtual network gateway | None (default) |
@@ -336,7 +336,7 @@ In this task, you'll configure peering between the virtual network containing th
 
     **NOTE:** 
     
-    This change is necessary due to the reduced number of nodes in the Cloudera cluster.
+    This change is necessary due to the reduced number of nodes in the MapR cluster.
 
     ---
 
@@ -352,7 +352,7 @@ In this task, you'll configure peering between the virtual network containing th
 
     ![The **Hosts** page in Ambari. The names and addresses of the worker nodes are highlighted.](../Images/1-Worker-Addresses.png)
 
-1. Return to the **Command Prompt** window displaying the SSH connection to the Cloudera virtual machine.
+1. Return to the **Command Prompt** window displaying the SSH connection to the MapR virtual machine.
 
 1. Run the following command to create a bash shell running as root.
 
@@ -381,7 +381,7 @@ In this task, you'll configure peering between the virtual network containing th
     ff02::2 ip6-allrouters
     ff02::3 ip6-allhosts
 
-    10.10.0.4 onprem.internal.cloudapp.net onprem
+    10.1.0.4 onprem.internal.cloudapp.net onprem
 
     # Entries for worker nodes
     10.3.0.14 wn0-kafkac
@@ -389,12 +389,12 @@ In this task, you'll configure peering between the virtual network containing th
     10.3.0.8  wn1-kafkac
     ```
 
-1. Run the **ifconfig** command, and make a note of the **inet addr** field for the **eth0** device. This is the private IP address of the Cloudera virtual machine. The text below shows an example of the output generated by the **ifconfig** command. In this example, the **inet addr** is 10.10.0.4.
+1. Run the **ifconfig** command, and make a note of the **inet addr** field for the **eth0** device. This is the private IP address of the MapR virtual machine. The text below shows an example of the output generated by the **ifconfig** command. In this example, the **inet addr** is 10.1.0.4.
 
     ```text
     root@onprem:~/apps/kafka# ifconfig
     eth0    Link encap:Ethernet  HWaddr 00:0d:3a:98:f9:70
-            inet addr:10.10.0.4  Bcast:10.10.0.255  Mask:255.255.255.0
+            inet addr:10.1.0.4  Bcast:10.1.0.255  Mask:255.255.255.0
             inet6 addr: fe80::20d:3aff:fe98:f970/64 Scope:Link
             UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
             RX packets:45434 errors:0 dropped:15 overruns:0 frame:0
@@ -429,7 +429,7 @@ In this task, you'll configure peering between the virtual network containing th
     sudo bash
     ```
 
-1. Edit the file **/etc/hosts**, and add an entry for the Cloudera virtual machine. The virtual machine has the name **onprem**, with the FQDN of **onprem.internal.cloudapp.net**. The file below shows an example, using the IP address 10.10.0.4 from the earlier step:
+1. Edit the file **/etc/hosts**, and add an entry for the MapR virtual machine. The virtual machine has the name **onprem**, with the FQDN of **onprem.internal.cloudapp.net**. The file below shows an example, using the IP address 10.1.0.4 from the earlier step:
 
     ```text
     127.0.0.1 localhost
@@ -443,8 +443,8 @@ In this task, you'll configure peering between the virtual network containing th
     ff02::3 ip6-allhosts
     10.3.0.20 hn0-kafkac.kaetua2hhycevkq3hkawfmrwjh.bx.internal.cloudapp.net  headnodehost hn0-kafkac.kaetua2hhycevkq3hkawfmrwjh.bx.internal.cloudapp.net. hn0-kafkac headnodehost. # SlaveNodeManager
     ...
-    # Cloudera virtual machine
-    10.10.0.4 onprem.internal.cloudapp.net onprem
+    # MapR virtual machine
+    10.1.0.4 onprem.internal.cloudapp.net onprem
     ```
 
 1. Run the following command to quit the root shell and return to the sshuser shell.
@@ -491,7 +491,7 @@ In this task, you'll configure peering between the virtual network containing th
     batch.size=100
     ```
 
-1. Run the following command to verify that the **flights** topic in the Cloudera cluster is accessible from the HDInsight Kafka cluster:
+1. Run the following command to verify that the **flights** topic in the MapR cluster is accessible from the HDInsight Kafka cluster:
 
     ---
 
@@ -503,7 +503,7 @@ In this task, you'll configure peering between the virtual network containing th
 
     ```bash
     /usr/hdp/4.1.2.5/kafka/bin/kafka-topics.sh --list \
-      --zookeeper onprem:2181
+      --zookeeper onprem:5181
     ```
 
     The results should include the **flights** topic:
@@ -547,34 +547,13 @@ In this task, you'll configure peering between the virtual network containing th
       --whitelist flights &
     ```
 
-1. Start the Kafka Console Consumer to listen to the **flights** topic. You'll use this tool to verify that MirrorMaker is configured correctly. The command should block, waiting to receive messages from the topic:
-
-    ```bash
-    /usr/hdp/4.1.2.5/kafka/bin/kafka-console-consumer.sh \
-      --bootstrap-server wn0-kafkac:9092 \
-      --topic flights
-    ```
-
-1. Return to the **Command Prompt** window displaying the SSH connection to the Cloudera virtual machine.
-
-1. Run the following command to enable you to post messages to the local **flights** topic.
-
-    ```bash
-    kafka-console-producer --broker-list \
-      onprem:9092 --topic flights
-    ```
-
-1. Enter a few messages, such as "Test 1", "Test 2", and so on. Verify that these messages are replicated and are displayed by the kafka-consumer-console.sh tool on the Kafka cluster head node. Press CTRL-D to finish. 
-
-1. In the command prompt window displaying the SSH connection to the Kafka head node, press CTL-C to stop the consumer.
-
 ## Task 4: Reconfigure the Kafka consumer application
 
 In this task, you'll migrate and reconfigure the Kafka consumer application to subscribe to topics in the HDInsight Kafka cluster.
 
 ![Kafka consumer subscribing to topics on the HDInsight cluster](../Images/1-HDInsightConsumer.png)
 
-1. Switch back to the SSH session for the Cloudera virtual machine.
+1. Switch back to the SSH session for the MapR virtual machine.
 
 1. Move to the **apps/kafka** folder: 
 
@@ -604,7 +583,7 @@ In this task, you'll migrate and reconfigure the Kafka consumer application to s
 
     This application represents the existing client workload.
 
-1. Open a new command prompt window on the desktop, and open another connection to the Cloudera virtual machine:
+1. Open a new command prompt window on the desktop, and open another connection to the MapR virtual machine:
 
     ```bash
     ssh azureuser@<ip address>
@@ -636,15 +615,15 @@ In this task, you'll migrate and reconfigure the Kafka consumer application to s
 
     Verify that messages start appearing. You have now migrated the Kafka client app to HDInsight.
 
-1. Return to the SSH session for the Cloudera virtual machine, and press CTRL-C to stop the consumer application.
+1. Return to the SSH session for the MapR virtual machine, and press CTRL-C to stop the consumer application.
 
 ## Task 5: Reconfigure the Kafka producer application
 
-In this task, you'll update the producer application to post messages to topics in the HDInsight cluster. After this step is complete, you can decommission Kafka in the Cloudera cluster.
+In this task, you'll update the producer application to post messages to topics in the HDInsight cluster. After this step is complete, you can decommission Kafka in the MapR cluster.
 
 ![Kafka producer posting to topics on the HDInsight cluster](../Images/1-HDInsightProducer.png)
 
-1. In the SSH session on the Cloudera virtual machine, run the following command to copy the Producer application to the head node in the HDInsight Kafka cluster:
+1. In the SSH session on the MapR virtual machine, run the following command to copy the Producer application to the head node in the HDInsight Kafka cluster:
 
 
     ```bash
@@ -672,7 +651,7 @@ In this task, you'll update the producer application to post messages to topics 
         --topic flights --partitions 1
     ```
 
-1. Switch back to the SSH session for the Cloudera virtual machine.
+1. Switch back to the SSH session for the MapR virtual machine.
 
 1. Run the following command to stop the **EventProducer** application:
 
