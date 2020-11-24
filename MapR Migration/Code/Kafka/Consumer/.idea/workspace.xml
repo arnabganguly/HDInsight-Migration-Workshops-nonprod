@@ -11,7 +11,15 @@
   <component name="ChangeListManager">
     <list default="true" id="89ab89d5-57c4-430f-bd73-cc0c20d2f517" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Instructions/Steps.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Instructions/Steps.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Consumer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Consumer.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/artifacts/Consumer_jar/Consumer.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ClientArgumentKeys.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ClientArgumentKeys.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ClientArgumentKeys$.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ClientArgumentKeys.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ClientArgumentParser$.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ClientArgumentParser.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/eventconsumer$.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/eventconsumer.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,7 +35,7 @@
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
-        <option name="mavenHome" value="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.2\plugins\maven\lib\maven3" />
+        <option name="mavenHome" value="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.2.3\plugins\maven\lib\maven3" />
       </MavenGeneralSettings>
     </option>
   </component>
@@ -41,11 +49,16 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
+    <property name="Repository.Attach.Annotations" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="project.structure.last.edited" value="Artifacts" />
-    <property name="project.structure.proportion" value="0.0" />
-    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Global Libraries" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
   </component>
   <component name="RunManager">
     <configuration name="eventconsumer" type="Application" factoryName="Application" temporary="true">
@@ -74,6 +87,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="789" y="274" key="#Project_Structure" timestamp="1606217328487">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="789" y="274" key="#Project_Structure/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1606217328487" />
     <state x="1185" y="457" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog" timestamp="1603728969785">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
@@ -82,6 +99,10 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="909" y="357" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603728918380" />
+    <state x="1074" y="614" key="#com.intellij.framework.addSupport.AddSupportForSingleFrameworkDialog" timestamp="1606215168636">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1074" y="614" key="#com.intellij.framework.addSupport.AddSupportForSingleFrameworkDialog/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1606215168636" />
     <state x="1184" y="492" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1603729136026">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
@@ -122,9 +143,24 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1718" height="416" key="GridCell.Tab.1.right/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603815562620" />
-    <state x="935" y="276" key="SettingsEditor" timestamp="1603729147342">
+    <state x="935" y="276" key="SettingsEditor" timestamp="1606217086402">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="935" y="276" key="SettingsEditor/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1603729147342" />
+    <state x="935" y="276" key="SettingsEditor/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1606217086402" />
+    <state x="1189" y="593" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD" timestamp="1606217026769">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1189" y="593" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD/0.0.2560.1400/-1600.0.1600.1160/3840.0.1600.1160@0.0.2560.1400" timestamp="1606217026769" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/main/java/eventconsumer.scala</url>
+          <line>20</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

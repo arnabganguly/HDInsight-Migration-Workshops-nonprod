@@ -12,11 +12,10 @@ object ClientArgumentParser {
 
     val bootstrapServers: String = "<bootstrap-server1,bootstrap-server2,...>"
     val topicName: String = "<topic>"
-    val partition: String = "<partition>"
 
     println()
     println(s"Usage: --bootstrap-servers $bootstrapServers" +
-      s" --topic $topicName --partitions $partition")
+      s" --topic $topicName")
     println()
   }
 
@@ -28,8 +27,6 @@ object ClientArgumentParser {
         parseArguments(argumentMap ++ Map(Symbol(ClientArgumentKeys.BootstrapServers) -> value.toString), tail)
       case "--topic" :: value :: tail =>
         parseArguments(argumentMap ++ Map(Symbol(ClientArgumentKeys.TopicName) -> value.toString), tail)
-      case "--partition" :: value :: tail =>
-        parseArguments(argumentMap ++ Map(Symbol(ClientArgumentKeys.Partition) -> value.toInt), tail)
       case option :: tail =>
         println()
         println("Unknown option: " + option)
@@ -43,7 +40,6 @@ object ClientArgumentParser {
 
     assert(argumentMap.contains(Symbol(ClientArgumentKeys.BootstrapServers)))
     assert(argumentMap.contains(Symbol(ClientArgumentKeys.TopicName)))
-    assert(argumentMap.contains(Symbol(ClientArgumentKeys.Partition)))
   }
 }
 

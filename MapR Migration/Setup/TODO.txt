@@ -1,0 +1,13 @@
+edit /etc/profile
+
+export KAFKA_HOME=/opt/mapr/kafka/kafka-1.1.1
+export PATH=${PATH}:${KAFKA_HOME}/bin
+
+
+----
+
+edit $KAFKA_HOME/config/server.properties
+
+zookeeper.connect=localhost:5181
+
+---

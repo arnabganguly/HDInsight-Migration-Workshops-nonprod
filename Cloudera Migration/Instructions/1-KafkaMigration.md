@@ -296,7 +296,7 @@ In this task, you'll configure peering between the virtual network containing th
 
     ![The **clustervnet | Peerings** page in the Azure portal. The user is about to add a new peering](../Images/1-Peerings-Add.png)
 
-1. On the **Add peering** page, enter the following settings, and then select **OK**:
+1. On the **Add peering** page, enter the following settings, and then select **Add**:
 
     | Field | Value|
     |-|-|
@@ -483,10 +483,10 @@ In this task, you'll configure peering between the virtual network containing th
     exclude.internal.topics=true
     ```
 
-1. Create another file named **producer.properties** with the following text:
+1. Create another file named **producer.properties** with the following text. Set the **boostrap.servers** property using the names of the worker nodes in your cluster:
 
     ```text
-    bootstrap.servers=wn0-kafkac:9092,wn1-kafkac:9092,wn1-kafkac:9092
+    bootstrap.servers=wn0-kafkac:9092,wn1-kafkac:9092,wn2-kafkac:9092
     acks=1
     batch.size=100
     ```
@@ -494,7 +494,7 @@ In this task, you'll configure peering between the virtual network containing th
 1. Run the following command to verify that the **flights** topic in the Cloudera cluster is accessible from the HDInsight Kafka cluster:
 
     ```bash
-    /usr/hdp/4.1.1.2/kafka/bin/kafka-topics.sh --list \
+    /usr/hdp/4.1.2.5/kafka/bin/kafka-topics.sh --list \
       --zookeeper onprem:2181
     ```
 
@@ -511,12 +511,12 @@ In this task, you'll configure peering between the virtual network containing th
 
     **NOTE:** 
     
-    zk0-kafkac is the name of one of the Zookeeper nodes in the kafka cluster. The /etc/hosts file should already contain an entry for this node.
+    zk0-kafkac is the name of one of the Zookeeper nodes in the kafka cluster. The /etc/hosts file should already contain an entry for this node. It is possible that the Zookeeper nodes are numbered differently, in which case try zk1-kafkac.
 
     ---
 
     ```bash
-    /usr/hdp/4.1.1.2/kafka/bin/kafka-topics.sh --create \
+    /usr/hdp/4.1.2.5/kafka/bin/kafka-topics.sh --create \
       --zookeeper zk0-kafkac:2181 \
       --replication-factor 3 \
       --partitions 1 \
@@ -526,14 +526,14 @@ In this task, you'll configure peering between the virtual network containing th
 1. Verify that the local **flights** topic is also available:
 
     ```bash
-    /usr/hdp/4.1.1.2/kafka/bin/kafka-topics.sh --list \
+    /usr/hdp/4.1.2.5/kafka/bin/kafka-topics.sh --list \
       --zookeeper zk0-kafkac:2181
     ```
 
 1. Start MirrorMaker as a background task:
 
     ```bash
-    /usr/hdp/4.1.1.2/kafka/bin/kafka-mirror-maker.sh \
+    /usr/hdp/4.1.2.5/kafka/bin/kafka-mirror-maker.sh \
       --producer.config producer.properties \
       --consumer.config consumer.properties \
       --whitelist flights &
@@ -542,7 +542,7 @@ In this task, you'll configure peering between the virtual network containing th
 1. Start the Kafka Console Consumer to listen to the **flights** topic. You'll use this tool to verify that MirrorMaker is configured correctly. The command should block, waiting to receive messages from the topic:
 
     ```bash
-    /usr/hdp/4.1.1.2/kafka/bin/kafka-console-consumer.sh \
+    /usr/hdp/4.1.2.5/kafka/bin/kafka-console-consumer.sh \
       --bootstrap-server wn0-kafkac:9092 \
       --topic flights
     ```
