@@ -2,9 +2,9 @@
 
 ## Introduction
 
-In this exercise, you'll migrate a Spark workload from Cloudera to HDInsight. You'll perform the following tasks:
+In this exercise, you'll migrate a Spark workload from MapR to HDInsight. You'll perform the following tasks:
 
-- Examine the existing Spark workload running on Cloudera. The workload runs inside a Jupyter notebook.
+- Examine the existing Spark workload running on MapR. The workload runs inside a Jupyter notebook.
 - Create an HDInsight Spark cluster.
 - Migrate the notebook and data for the Spark workload to the HDInsight cluster.
 - Test the Spark workload on the HDInsight cluster.
@@ -22,11 +22,11 @@ The existing Spark workload comprises a Jupyter notebook that generates reports 
 
 The data in the Hive database comprises selected fields from the data received from Kafka. The Kafka data stream includes the IATA codes for each airport, but not the names. Instead, airport names and other static information are stored in a separate CSV file that is accessed as an external table in Hive. 
 
-![The structure of the existing Spark/Hive/Jupyter Notebooks system running on Cloudera](../Images/3-SparkSystem.png)
+![The structure of the existing Spark/Hive/Jupyter Notebooks system running on MapR](../Images/3-SparkSystem.png)
  
 ### Create the airportdata external table in Hive
 
-1. If you haven't already done so, on your desktop, open a **Command Prompt** window and sign in to the Cloudera virtual machine. The username is **azureuser***. Replace *\<ip_address`>* with the IP address of the virtual machine.
+1. If you haven't already done so, on your desktop, open a **Command Prompt** window and sign in to the MapR virtual machine. The username is **azureuser***. Replace *\<ip_address`>* with the IP address of the virtual machine.
 
     ```PowerShell
     ssh azureuser@<ip address>
@@ -62,10 +62,10 @@ The data in the Hive database comprises selected fields from the data received f
     -rw-r--r--   3 azureuser azureuser     247809 2020-11-16 17:43 airportdata/airports.csv
     ```
 
-1. Start the **hive** utility:
+1. Start the **beeline** utility:
 
     ```bash
-    hive
+    beeline -n azureuser -u jdbc:hive2://localhost:10000/default
     ```
 
 1. Create an external table named **airportdata** that references the CSV file in the  **airportdata** folder:
@@ -105,26 +105,30 @@ The data in the Hive database comprises selected fields from the data received f
 
     The table should contain 3376 rows
 
-1. Quit the **hive** utility:
+1. Exit the **beeline** utility:
 
     ```sql
-    exit;
+    !quit
     ```
 ### Run the **FlightStats** Jupyter notebook
 
 1. Run the following command to start the Jupyter notebook server:
 
     ```bash
-    pyspark2 --driver-cores 2 --executor-memory 512m
+    pyspark
     ```
 
-    ---
+    PySpark is configured to run the Jupyter service running. You should see the following messages.
 
-    **NOTE:** This command starts the Jupyter service running, and also displays a simple character mode interface which you can ignore for the time being.
+    ```text
+    [I 16:34:47.210 NotebookApp] Serving notebooks from local directory: /home/azureuser/apps/reports
+    [I 16:34:47.210 NotebookApp] Jupyter Notebook 6.1.5 is running at:
+    [I 16:34:47.210 NotebookApp] http://onprem.internal.cloudapp.net:8888/
+    [I 16:34:47.210 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+    [W 16:34:47.235 NotebookApp] No web browser found: could not locate runnable browser.
+    ```
 
-    ---
-
-1. Using the web browser, move to the URL <ip-address>:8888, where *\<ip-address\>* is the IP address of the Cloudera virtual machine. You should see the Jupyter Notebooks login page:
+1. Using the web browser, move to the URL <ip-address>:8888, where *\<ip-address\>* is the IP address of the MapR virtual machine. You should see the Jupyter Notebooks login page:
 
     ![The Jupyter Notebooks login page.](../Images/3-Jupyter-Notebooks-Login.png)
 
@@ -153,11 +157,9 @@ The data in the Hive database comprises selected fields from the data received f
 
 1. Close the browser window displaying the notebook.
 
-1. Return to the SSH session running on the Cloudera virtual machine.
+1. Return to the SSH session running on the MapR virtual machine.
 
-1. Press **q** to stop the Jupyter notebook server, and then press **y** to confirm that you want to halt te server.
-
-1. When prompted, press **Ctrl-C** to shut down the kernels run by the server, and then press **y** to confirm.
+1. Press **Ctrl-C** to shut down the kernels run by the server, and then press **y** to confirm.
 
 ## Task 2: Create the HDInsight Spark cluster
 
@@ -190,7 +192,7 @@ In the live system, the HDInsight Spark cluster will retrieve the data from the 
     | Subscription | Select your subscription |
     | Resource group | clusterrg |
     | Cluster name | sparkcluster*nnnn*, where *nnnn* is the same random four digit number you used for the SQL Database (if necessary, you can use a different number, but for consistency try and reuse the same value if possible) |
-    | Region | Select the same region used by the Cloudera virtual machine and the **clusterrg** resource group |
+    | Region | Select the same region used by the MapR virtual machine and the **clusterrg** resource group |
     | Cluster type | Spark |
     | Version | Spark 2.4 (HDI 4.0) |
     | Cluster login name | admin |
@@ -244,11 +246,11 @@ In the live system, the HDInsight Spark cluster will retrieve the data from the 
 
     ![The Ambari home page, showing the running services for the Spark cluster.](../Images/3-Ambari-Home.png)
 
-1. In the left-hand pane of the Ambari page, select **Hosts**. Make a note of the name prefixes and IP addresses of the worker nodes with the prefixes **wn0**, **wn1**, and **wn2**. Also, record the IP address of the first head node, with the prefix **hn0**.
+1. In the left-hand pane of the Ambari page, select **Hosts**. Make a note of the name prefixes and IP addresses of the worker nodes with the prefixes **wn*X*** (for example, **wn0**, **wn1**, **wn2**, **wn3**, etc). Also, record the IP address of the first head node, with the prefix **hn0**.
 
-1. Return to the **Command Prompt** window displaying the SSH connection to the Cloudera virtual machine.
+1. Return to the **Command Prompt** window displaying the SSH connection to the MapR virtual machine.
 
-1. On the Cloudera virtual machine. run the following command to create a bash shell running as root.
+1. On the MapR virtual machine. run the following command to create a bash shell running as root.
 
     ```bash
     sudo bash
@@ -267,8 +269,6 @@ In the live system, the HDInsight Spark cluster will retrieve the data from the 
     ff02::2 ip6-allrouters
     ff02::3 ip6-allhosts
 
-    10.10.0.4 onprem.internal.cloudapp.net onprem
-
     # Head node
     10.1.0.21 hn0-sparkc
 
@@ -278,12 +278,12 @@ In the live system, the HDInsight Spark cluster will retrieve the data from the 
     10.1.0.9 wn2-sparkc
     ```
 
-1. Run the **ifconfig** command, and make a note of the **inet addr** field for the **eth0** device. In the example shown below, the **inet addr** is 10.10.0.4.
+1. Run the **ifconfig** command, and make a note of the **inet addr** field for the **eth0** device. In the example shown below, the **inet addr** is 10.1.0.4.
 
     ```text
     root@onprem:~/apps/kafka# ifconfig
     eth0    Link encap:Ethernet  HWaddr 00:0d:3a:98:f9:70
-            inet addr:10.10.0.4  Bcast:10.10.0.255  Mask:255.255.255.0
+            inet addr:10.1.0.4  Bcast:10.1.0.255  Mask:255.255.255.0
             inet6 addr: fe80::20d:3aff:fe98:f970/64 Scope:Link
             UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
             RX packets:45434 errors:0 dropped:15 overruns:0 frame:0
@@ -315,7 +315,7 @@ In the live system, the HDInsight Spark cluster will retrieve the data from the 
     ```bash
     sudo bash
     ```
-1. Edit the file **/etc/hosts**, and add an entry for the Cloudera virtual machine. You noted the IP address of the Cloudera virtual machine earlier. The virtual machine has the name **onprem**, with the FQDN of **onprem.internal.cloudapp.net**. The file below shows an example, using the IP address 10.10.0.4:
+1. Edit the file **/etc/hosts**, and add an entry for the MapR virtual machine. You noted the IP address of the MapR virtual machine earlier. The virtual machine has the name **onprem**, with the FQDN of **onprem.internal.cloudapp.net**. The file below shows an example, using the IP address 10.1.0.4:
 
     ```text
     127.0.0.1 localhost
@@ -329,8 +329,8 @@ In the live system, the HDInsight Spark cluster will retrieve the data from the 
     ff02::3 ip6-allhosts
     10.3.0.16 hn0-llapcl.kaetua2hhycevkq3hkawfmrwjh.bx.internal.cloudapp.net hn0-llapcl hn0-llapcl.kaetua2hhycevkq3hkawfmrwjh.bx.internal.cloudapp.net.
     ...
-    # Cloudera virtual machine
-    10.10.0.4 onprem.internal.cloudapp.net onprem
+    # MapR virtual machine
+    10.1.0.4 onprem.internal.cloudapp.net onprem
     ```
 
 1. Run the following command to quit the root shell and return to the sshuser shell.
@@ -357,7 +357,7 @@ In this task, you'll transfer the data and recreate the **airportdata** external
 
 ### Migrate the data for the **airportdata** external table
 
-1. Return to the SSH session on the Cloudera virtual machine.
+1. Return to the SSH session on the MapR virtual machine.
 
 1. Execute the command shown below. This command creates a new directory called **airportdata** in cluster storage for the HDInsight cluster. Replace **\<key\>** with the key for the storage account used by the HDInsight cluster (you recorded this information in the previous exercise), and replace **\<9999\>** with the numeric suffix for your storage account:
 
@@ -444,7 +444,7 @@ In this task, you'll transfer the data and recreate the **airportdata** external
 
 ### Transfer the FlightStats Jupyter notebook
 
-1. Switch back to the SSH session running on the Cloudera virtual machine.
+1. Switch back to the SSH session running on the MapR virtual machine.
 
 1. Move to the apps/reports folder. 
 

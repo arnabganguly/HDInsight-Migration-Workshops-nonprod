@@ -13,7 +13,7 @@ In this exercise, you'll migrate an active Hive database from MapR to HDInsight.
 
 **NOTE:**
 
-Hive2 replication is not an option in this exercise because the tables in the MapR Hive database are transactional.
+Hive2 replication from MapR to HDInsight is not supported. Hive on MapR provides its own replication strategy based on MapR volumes.
 
 ---
 
@@ -94,14 +94,21 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
     CLUSTERED BY (flightnum) INTO 10 BUCKETS
     ROW FORMAT DELIMITED
     FIELDS TERMINATED BY '\t'
-    STORED AS ORC
-    TBLPROPERTIES('transactional'='true');
+    STORED AS ORC;
     ```
 
-1. Run the following command to quit the **hive** utility and return to the shell prompt:
+    ---
+
+    **NOTE:**
+
+    The name of the **timestamp** column is enclosed between backquote characters. This is because timestamp is a reserved word in the version of Hive implemented by the MapR cluster.
+
+    ---
+
+1. Run the following command to close the beeline utility and return to the shell prompt:
 
     ```sql
-    exit;
+    !quit
     ```
 
 1. Start the **SparkConsumer** app. This command runs the app as a Spark workload:
@@ -110,9 +117,6 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
     spark-submit \
         --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.4 \
         --class SparkConsumer \
-        --master yarn \
-        --total-executor-cores 2 \
-        --executor-memory 512m \
         SparkConsumer.jar \
             --application flightsapp \
             --bootstrap onprem:9092 \
@@ -171,29 +175,17 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
     ...
     ```
 
-1. Allow the the applications to run for a five minutes, to generate a few hundred records.
+1. Allow the the applications to run for five minutes, to generate a few hundred records.
 
-1. Press CTRL-C to stop the **SparkConsumer** app, and run the following command to halt the **EventProducer** app:
+1. Open a new command prompt window on the desktop, and open another connection to the MapR virtual machine.
 
-    ```bash
-    kill %1
-    ```
-   
-    ---
-
-    **NOTE:**
-
-    In the 'live' system, the **SparkConsumer** and **EventProducer** apps will be running continually, but the MapR virtual machine used by this exercise provides only a limited amount of resources, and some of the subsequent procedures may take a long time to run if these apps are left running.
-
-    --- 
-
-1. In shell prompt, start the **hive** utility:
+1.  At shell prompt for the second connection to the MapR virtual machine, start the **beeline** utility:
 
     ```bash
-    hive
+    beeline -n azureuser -u jdbc:hive2://localhost:10000/default
     ```
 
-1. At the **hive\>** prompt, run the following query:
+1. At the beeline prompt, run the following query:
 
     ```hive
     SELECT * FROM flightinfo;
@@ -223,11 +215,25 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
 
 1. Wait a few seconds and repeat the query. The number of rows should have increased.
 
-1. Quit the **hive** utility, but leave the SSH connection open:
+1. Quit the beeline utility, and close the second SSH connection:
 
     ```hive
-    exit;
+    !quit
     ```
+
+1. In the first SSH connection to the MapR virtual machine, press CTRL-C to stop the **SparkConsumer** app, and run the following command to halt the **EventProducer** app:
+
+    ```bash
+    kill %1
+    ```
+   
+    ---
+
+    **NOTE:**
+
+    In the 'live' system, the **SparkConsumer** and **EventProducer** apps will be running continually, but the MapR virtual machine used by this exercise provides only a limited amount of resources, and some of the subsequent procedures may take a long time to complete if these apps are left running.
+
+    --- 
 
 ## Task 2: Create the HDInsight LLAP cluster
 
@@ -343,7 +349,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
     ---
 
-1. In the left-hand pane of the Ambari page, select **Hosts**. Make a note of the name prefixes and IP addresses of the worker nodes with the prefixes **wn0**, **wn1**, and **wn2**.
+1. In the left-hand pane of the Ambari page, select **Hosts**. Make a note of the name prefixes and IP addresses of the worker nodes with the prefixes **wn*X*** (**wn0**, **wn3**, and **wn4** in the example shown in the image below).
 
     ![The **Hosts** page in Ambari. The names and addresses of the worker nodes are highlighted.](../Images/2-Worker-Addresses.png)
 
@@ -368,11 +374,9 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     ff02::2 ip6-allrouters
     ff02::3 ip6-allhosts
 
-    10.1.0.4 onprem.internal.cloudapp.net onprem
-
     # Entries for worker nodes
     10.3.0.11 wn0-llapcl
-    10.3.0.4  wn2-llapcl
+    10.3.0.4  wn3-llapcl
     10.3.0.14 wn4-llapcl
     ```
 
@@ -472,6 +476,7 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
 1. Select **Save**, select **RESTART**, and then select **Restart All Affected**. 
 
 1. In the **Confirmation** dialog box, select **CONFIRM RESTART ALL**, and Wait for the services to restart before continuing.
+
 ## Task 3: Copy data from the MapR cluster to the HDInsight LLAP cluster
 
 1.  In the Azure portal, open a Cloud Shell prompt running PowerShell.
@@ -494,13 +499,24 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
     
     Make a note of the value of the **key1** key.
 
-
 1. Return to the SSH shell on the MapR virtual machine.
 
-1. Start the hive utility, and run the following query:
+1. Run the following command to create a folder named **exports** in HDFS. You'll use this folder to hold the data exported from the **flightinfo** table before transferring it to the HDInsight cluster.
+
+    ```bash
+    hdfs dfs -mkdir exports
+    ```
+
+1. Start the beeline utility
+
+    ```bash
+    beeline -n azureuser -u jdbc:hive2://localhost:10000/default
+    ```
+
+1. Run the following query using beeline:
 
     ```sql
-    SELECT MAX(timestamp) FROM flightinfo;
+    SELECT MAX(`timestamp`) FROM flightinfo;
     ```
 
     Make a note of the value returned.
@@ -516,28 +532,47 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
     ```sql
     INSERT INTO todaysinfo
     SELECT * FROM flightinfo
-    WHERE timestamp <= '<value>';
+    WHERE `timestamp` <= '<value>';
     ```
 
-1. Export the **todaysinfo** table to a folder named **exports** in HDFS:
+1. Export the **todaysinfo** table to the **exports** folder you created earlier in HDFS:
 
     ```sql
-    export table todaysinfo to 'exports/todaysinfo';
+    export table todaysinfo to '/user/azureuser/exports/todaysinfo';
     ```
 
-1. Quit the hive utility:
+1. Quit the beeline utility:
 
     ```sql
-    exit;
+    !quit
     ```
 
+1. Verify that the **exports** folder contains the data from the **todaysinfo** table:
+
+    ```bash
+    hdfs dfs -ls -R exports
+    ```
+
+    The output should look similar to this (there will likely be several hundred files):
+
+    ```text
+    drwxr-xr-x   - azureuser azureuser          2 2020-11-25 13:30 exports/todaysinfo
+    -rwxr-xr-x   3 azureuser azureuser       2002 2020-11-25 13:30 exports/todaysinfo/_metadata
+    drwxr-xr-x   - azureuser azureuser        529 2020-11-25 13:30 exports/todaysinfo/data
+    -rwxr-xr-x   3 azureuser azureuser       1321 2020-11-25 13:30 exports/todaysinfo/data/000000_0
+    -rwxr-xr-x   3 azureuser azureuser       1311 2020-11-25 13:30 exports/todaysinfo/data/000001_0
+    -rwxr-xr-x   3 azureuser azureuser       1299 2020-11-25 13:30 exports/todaysinfo/data/000002_0
+    -rwxr-xr-x   3 azureuser azureuser       1308 2020-11-25 13:30 exports/todaysinfo/data/000003_0
+    -rwxr-xr-x   3 azureuser azureuser       1292 2020-11-25 13:30 exports/todaysinfo/data/000004_0
+    ...
+    ```
 1. Run the following **DistCp** command to copy the exported data in the **exports** directory in HDFS to the **staging** directory in the HDInsight cluster. Replace **\<key\>** with the key for the storage account used by the HDInsight cluster, and replace **\<9999\>** with the numeric suffix for your storage account:
 
     ```bash
     hadoop distcp \
         -D fs.azure.account.key.clusterstorage<9999>.blob.core.windows.net='<key>' \
         /user/azureuser/exports/todaysinfo \
-        wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging
+        wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging/todaysinfo
     ```
 
 1. Use the **hdfs** command shown below to list the contents of the **staging** directory in the storage account for the HDInsight cluster, to verify that the exported files have been transferred:
@@ -545,16 +580,21 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
     ```bash
     hdfs dfs \
         -D fs.azure.account.key.clusterstorage<9999>.blob.core.windows.net='<key>' \
-        -ls -R wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging
+        -ls -R wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging/todaysinfo
     ```
 
     The output should include the following files:
 
     ```text
-    drwxr-xr-x   - azureuser supergroup          0 2020-11-10 14:17 wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging/todaysinfo
-    -rw-r--r--   1 azureuser supergroup       1895 2020-11-10 14:17 wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging/todaysinfo/_metadata
-    drwxr-xr-x   - azureuser supergroup          0 2020-11-10 14:17 wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging/todaysinfo/data
-    -rw-r--r--   1 azureuser supergroup      48310 2020-11-10 14:17 wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging/todaysinfo/data/000000_0
+    drwxrwxrwx - 0 1970-01-01 00:00 wasbs://cluster9999@clusterstorage9999.blob.core.windows.net/staging/todaysinfo
+    -rw-r--r-- 1 azureuser supergroup 2002 2020-11-25 13:38 wasbs://cluster9999@clusterstorage9999.blob.core.windows.net/staging/todaysinfo/_metadata
+    drwxrwxrwx - 0 1970-01-01 00:00 wasbs://cluster9999@clusterstorage9999.blob.core.windows.net/staging/todaysinfo/data
+    -rw-r--r-- 1 azureuser supergroup 1321 2020-11-25 13:39 wasbs://cluster9999@clusterstorage9999.blob.core.windows.net/staging/todaysinfo/data/000000_0
+    -rw-r--r-- 1 azureuser supergroup 1311 2020-11-25 13:38 wasbs://cluster9999@clusterstorage9999.blob.core.windows.net/staging/todaysinfo/data/000001_0
+    -rw-r--r-- 1 azureuser supergroup 1299 2020-11-25 13:38 wasbs://cluster9999@clusterstorage9999.blob.core.windows.net/staging/todaysinfo/data/000002_0
+    -rw-r--r-- 1 azureuser supergroup 1308 2020-11-25 13:40 wasbs://cluster9999@clusterstorage9999.blob.core.windows.net/staging/todaysinfo/data/000003_0
+    -rw-r--r-- 1 azureuser supergroup 1292 2020-11-25 13:39 wasbs://cluster9999@clusterstorage9999.blob.core.windows.net/staging/todaysinfo/data/000004_0
+    ...
     ```
 
 1. Switch to the SSH session connected to the head node of the HDInsight cluster.
@@ -598,14 +638,6 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
     STORED AS ORC
     TBLPROPERTIES('transactional'='false');
     ```
-
-    ---
-
-    **NOTE:**
-
-    The name of the **timestamp** column is enclosed between backquote characters. This is because timestamp is a reserved word in the version of Hive implemented by the HDInsight cluster.
-
-    ---
 
 1. Import the data for the **flightinfo** table from the **staging** folder:
 

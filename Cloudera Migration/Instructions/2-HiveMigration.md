@@ -178,23 +178,11 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
     ...
     ```
 
-1. Allow the the applications to run for a five minutes, to generate a few hundred records.
+1. Allow the the applications to run for five minutes, to generate a few hundred records.
 
-1. Press CTRL-C to stop the **SparkConsumer** app, and run the following command to halt the **EventProducer** app:
+1. Open a new command prompt window on the desktop, and open another connection to the Cloudera virtual machine.
 
-    ```bash
-    kill %1
-    ```
-   
-    ---
-
-    **NOTE:**
-
-    In the 'live' system, the **SparkConsumer** and **EventProducer** apps will be running continually, but the Cloudera virtual machine used by this exercise provides only a limited amount of resources, and some of the subsequent procedures may take a long time to run if these apps are left running.
-
-    --- 
-
-1. In shell prompt, start the **hive** utility:
+1. At shell prompt for the second connection to the Cloudera virtual machine, start the **hive** utility:
 
     ```bash
     hive
@@ -230,11 +218,25 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
 
 1. Wait a few seconds and repeat the query. The number of rows should have increased.
 
-1. Quit the **hive** utility, but leave the SSH connection open:
+1. Quit the **hive** utility, and close the SSH connection:
 
     ```hive
     exit;
     ```
+
+1. In the first SSH session connected to the Cloudera virtual machine, press CTRL-C to stop the **SparkConsumer** app, and run the following command to halt the **EventProducer** app:
+
+    ```bash
+    kill %1
+    ```
+   
+    ---
+
+    **NOTE:**
+
+    In the 'live' system, the **SparkConsumer** and **EventProducer** apps will be running continually, but the Cloudera virtual machine used by this exercise provides only a limited amount of resources, and some of the subsequent procedures may take a long time to complete if these apps are left running.
+
+    --- 
 
 ## Task 2: Create the HDInsight LLAP cluster
 
@@ -350,7 +352,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
     ---
 
-1. In the left-hand pane of the Ambari page, select **Hosts**. Make a note of the name prefixes and IP addresses of the worker nodes with the prefixes **wn0**, **wn1**, and **wn2**.
+1. In the left-hand pane of the Ambari page, select **Hosts**. Make a note of the name prefixes and IP addresses of the worker nodes with the prefixes prefixes **wn*X*** (**wn0**, **wn3**, and **wn4** in the example shown in the image below).
 
     ![The **Hosts** page in Ambari. The names and addresses of the worker nodes are highlighted.](../Images/2-Worker-Addresses.png)
 
@@ -379,7 +381,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
     # Entries for worker nodes
     10.3.0.11 wn0-llapcl
-    10.3.0.4  wn2-llapcl
+    10.3.0.4  wn3-llapcl
     10.3.0.14 wn4-llapcl
     ```
 
@@ -479,6 +481,7 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
 1. Select **Save**, select **RESTART**, and then select **Restart All Affected**. 
 
 1. In the **Confirmation** dialog box, select **CONFIRM RESTART ALL**, and Wait for the services to restart before continuing.
+
 ## Task 3: Copy data from the Cloudera cluster to the HDInsight LLAP cluster
 
 1.  In the Azure portal, open a Cloud Shell prompt running PowerShell.
@@ -500,7 +503,6 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
     ```
     
     Make a note of the value of the **key1** key.
-
 
 1. Return to the SSH shell on the Cloudera virtual machine.
 
@@ -544,7 +546,7 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
     hadoop distcp \
         -D fs.azure.account.key.clusterstorage<9999>.blob.core.windows.net='<key>' \
         /user/azureuser/exports/todaysinfo \
-        wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging
+        wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging/todaysinfo
     ```
 
 1. Use the **hdfs** command shown below to list the contents of the **staging** directory in the storage account for the HDInsight cluster, to verify that the exported files have been transferred:
@@ -552,7 +554,7 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
     ```bash
     hdfs dfs \
         -D fs.azure.account.key.clusterstorage<9999>.blob.core.windows.net='<key>' \
-        -ls -R wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging
+        -ls -R wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging/todaysinfo
     ```
 
     The output should include the following files:

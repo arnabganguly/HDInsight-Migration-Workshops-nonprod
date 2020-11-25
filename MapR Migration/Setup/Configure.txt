@@ -1,3 +1,14 @@
+---
+NEW
+---
+
+Install Tez
+Patch APIServer
+Patch WebServer
+
+/opt/mapr/server/configure.sh -R
+ 
+---
 
 Apply patch mapr-patch-6.1.0.20180926230239.GA-20201110100359.x86_64.deb
 (test Spark Streaming Consumer afterwards)
@@ -62,8 +73,8 @@ zookeeper.connect=localhost:5181
 ---
 
 sudo -u mapr bash
-/opt/mapr/hadoop/hadoop-2.7.0/bin/hdfs dfs -mkdir /user/azure
-/opt/mapr/hadoop/hadoop-2.7.0/bin/hdfs dfs -chown azureuser:azureuser /user/azure
+/opt/mapr/hadoop/hadoop-2.7.0/bin/hdfs dfs -mkdir /user/azureuser
+/opt/mapr/hadoop/hadoop-2.7.0/bin/hdfs dfs -chown azureuser:azureuser /user/azureuser
 
 ---
 
@@ -87,3 +98,6 @@ edit /opt/mapr/hive/hive-2.3/conf/hive-site.xml
     <name>hive.txn.manager</name>
     <value>org.apache.hadoop.hive.ql.lockmgr.DbTxnManager</value>
   </property>
+
+
+
