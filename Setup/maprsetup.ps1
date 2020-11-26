@@ -235,7 +235,7 @@ $VirtualMachine = Add-AzVMDataDisk `
     -VM $VirtualMachine `
     -ManagedDiskId $dataDisk.Id `
     -CreateOption Attach `
-    -Lun 1
+    -Lun 0
 
 # Create a public IP for the VM
 $publicIp = New-AzPublicIpAddress `
