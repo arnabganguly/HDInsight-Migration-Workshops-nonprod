@@ -468,7 +468,7 @@ In this task, you'll configure peering between the virtual network containing th
     ---
 
     **NOTE:**
-    Under some circumstances, the worker nodes might not be named sequentially. For example, you might that they are named **wn3-kafkac** and **wn4-kafkac**. Check the entries in the **/etc/hosts** file of the head node for the names of these nodes.
+    Under some circumstances, the worker nodes might not be named sequentially. For example, you might find that they are named **wn3-kafkac** and **wn4-kafkac**. Check the entries in the **/etc/hosts** file of the head node for the names of these nodes.
 
     ---
 

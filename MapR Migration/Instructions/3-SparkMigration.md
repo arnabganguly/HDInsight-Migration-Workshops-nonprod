@@ -256,7 +256,7 @@ In the live system, the HDInsight Spark cluster will retrieve the data from the 
     sudo bash
     ```
 
-1. Edit the **/etc/hosts** file, and add entries for the head node and each of the worker nodes in the HDInsight Kafka cluster to the end of the file. The file below shows an example, based on the screenshot shown above:
+1. Edit the **/etc/hosts** file, and add entries for the head node and each of the worker nodes in the HDInsight Spark cluster to the end of the file. The file below shows an example, based on the screenshot shown above:
 
     ```text
     127.0.0.1 localhost
@@ -281,7 +281,7 @@ In the live system, the HDInsight Spark cluster will retrieve the data from the 
 1. Run the **ifconfig** command, and make a note of the **inet addr** field for the **eth0** device. In the example shown below, the **inet addr** is 10.1.0.4.
 
     ```text
-    root@onprem:~/apps/kafka# ifconfig
+    root@onprem:~/apps/reports# ifconfig
     eth0    Link encap:Ethernet  HWaddr 00:0d:3a:98:f9:70
             inet addr:10.1.0.4  Bcast:10.1.0.255  Mask:255.255.255.0
             inet6 addr: fe80::20d:3aff:fe98:f970/64 Scope:Link
@@ -304,7 +304,7 @@ In the live system, the HDInsight Spark cluster will retrieve the data from the 
 
 1. In the Azure portal, on the page for **sparkcluster*9999***, under **Settings**, select **SSH + Cluster login**. In the **SSH + Cluster login** pane, in the **Hostname** list select your cluster, and then make a note of the **ssh** command you can use to connect to this cluster:
 
-1. On the desktop, open another command prompt window, and run the SSH command you just noted, to sign in to the head node of the Kafka cluster. The password is **Pa55w.rdDemo**:
+1. On the desktop, open another command prompt window, and run the SSH command you just noted, to sign in to the head node of the Spark cluster. The password is **Pa55w.rdDemo**:
 
     ```bash
     ssh sshuser@sparkcluster9999-ssh.azurehdinsight.net
@@ -454,7 +454,7 @@ In this task, you'll transfer the data and recreate the **airportdata** external
 
     This folder contains the notebook file, **FlightStats.ipynb**.
 
-1. Copy the notebook file to the head node of the HDInsight cluster:
+1. Copy the notebook file to the head node of the HDInsight Spark cluster:
 
     ```bash
     scp FlightStats.ipynb sshuser@hn0-sparkc:~

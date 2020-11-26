@@ -364,7 +364,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     sudo bash
     ```
 
-1. Edit the **/etc/hosts** file, and add entries for each of the worker nodes in the HDInsight Kafka cluster to the end of the file. The file below shows an example, based on the screenshot shown above:
+1. Edit the **/etc/hosts** file, and add entries for each of the worker nodes in the HDInsight LLAP cluster to the end of the file. The file below shows an example, based on the screenshot shown above:
 
     ```text
     127.0.0.1 localhost
@@ -388,7 +388,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 1. Run the **ifconfig** command, and make a note of the **inet addr** field for the **eth0** device. In the example shown below, the **inet addr** is 10.10.0.4.
 
     ```text
-    root@onprem:~/apps/kafka# ifconfig
+    root@onprem:~/apps/spark# ifconfig
     eth0    Link encap:Ethernet  HWaddr 00:0d:3a:98:f9:70
             inet addr:10.10.0.4  Bcast:10.10.0.255  Mask:255.255.255.0
             inet6 addr: fe80::20d:3aff:fe98:f970/64 Scope:Link
@@ -411,7 +411,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
 1. In the Azure portal, on the page for **llapcluster*9999***, under **Settings**, select **SSH + Cluster login**. In the **SSH + Cluster login** pane, in the **Hostname** list select your cluster, and then make a note of the **ssh** command you can use to connect to this cluster:
 
-1. On the desktop, open another command prompt window, and run the SSH command you just noted, to sign in to the head node of the Kafka cluster. The password is **Pa55w.rdDemo**:
+1. On the desktop, open another command prompt window, and run the SSH command you just noted, to sign in to the head node of the LLAP cluster. The password is **Pa55w.rdDemo**:
 
     ```bash
     ssh sshuser@llapcluster9999-ssh.azurehdinsight.net
@@ -462,7 +462,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     ---
 
     **NOTE:**
-    Under some circumstances, the worker nodes might not be named sequentially. For example, you might that they are named **wn2-llapcl** and **wn4-llapcl**, as illustrated in the examples shown above. Check the entries in the **/etc/hosts** file of the head node for the names of these nodes.
+    Under some circumstances, the worker nodes might not be named sequentially. For example, you might find that they are named **wn2-llapcl** and **wn4-llapcl**, as illustrated in the examples shown above. Check the entries in the **/etc/hosts** file of the head node for the names of these nodes.
 
     ---
 
@@ -644,7 +644,7 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
     
     ---
 
-    **You have now migrated the Hive database to HDInsight. To keep the data on the HDInsight cluster up-to-date, you perform the following tasks:**
+    **You have now migrated the Hive database to HDInsight. To keep the data on the HDInsight cluster up-to-date, you can use the following general strategy:**
     
     1. Save the note of the timestamp for the last record copied from the **flightinfo** table.
 
@@ -670,13 +670,12 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
               `timestamp` <= '<lastest_timestamp>';
         ```
 
-    1. Export the **todaysinfo** table.
+    1. Export the **todaysinfo** table (remove any existing exported data first).
 
     1. Delete the existing data from the **staging** directory in the HDInsight cluster:
 
         ```bash
-        hdfs dfs -libjars $azjars \
-            -D fs.AbstractFileSystem.wasb.Impl=org.apache.hadoop.fs.azure.Wasb \  
+        hdfs dfs -D fs.AbstractFileSystem.wasb.Impl=org.apache.hadoop.fs.azure.Wasb \  
             -D fs.azure.account.key.clusterstorage<9999>.blob.core.windows.net='<key>' \
             -rm -R wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging
         ```
@@ -685,7 +684,6 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
 
     1. On the HDInsight cluster, import the data from the **staging** directory into the **flightinfo** table.
     
-
     ---
 
 ## Task 5: Tidy up
