@@ -26,7 +26,7 @@ The data in the Hive database comprises selected fields from the data received f
  
 ### Create the airportdata external table in Hive
 
-1. If you haven't already done so, on your desktop, open a **Command Prompt** window and sign in to the MapR virtual machine. The username is **azureuser***. Replace *\<ip_address`>* with the IP address of the virtual machine.
+1. If you haven't already done so, on your desktop, open a **Command Prompt** window and sign in to the MapR virtual machine. The username is **azureuser***. Replace *\<ip_address\>* with the IP address of the virtual machine.
 
     ```PowerShell
     ssh azureuser@<ip address>
@@ -128,7 +128,7 @@ The data in the Hive database comprises selected fields from the data received f
     [W 16:34:47.235 NotebookApp] No web browser found: could not locate runnable browser.
     ```
 
-1. Using the web browser, move to the URL <ip-address>:8888, where *\<ip-address\>* is the IP address of the MapR virtual machine. You should see the Jupyter Notebooks login page:
+1. Using the web browser, move to the URL \<ip-address\>:8888, where **\<ip-address\>** is the IP address of the MapR virtual machine. You should see the Jupyter Notebooks login page:
 
     ![The Jupyter Notebooks login page.](../Images/3-Jupyter-Notebooks-Login.png)
 
@@ -211,7 +211,7 @@ In the live system, the HDInsight Spark cluster will retrieve the data from the 
     | Identity | clustermanagedid |
     | SQL database for Ambari | leave blank |
     | SQL database for Hive | hiveserver*9999*/hivedb*9999* |
-    | Authenticate SQL Database | Select **Authenticate**. On the **Authenticate** page, enter **azuresa** for the username, provide the password you created for this user in the database, and then click **Test Connection**. Click **Select** to finish.
+    | Authenticate SQL Database | Select **Authenticate**. On the **Authenticate** page, enter **azuresa** for the username, provide the password you created for this user in the database, and then click **Test connection**. Click **Select** to finish.
     | SQL database for Ooozie | leave blank |
 
 1. On the **Security + networking** tab, enter the following settings, and then select **Next: Configuration + pricing**
@@ -427,7 +427,7 @@ In this task, you'll transfer the data and recreate the **airportdata** external
     FROM airportdata;
     ```
 
-    The table should still contain 3376 rows
+    The table should still contain 3376 rows.
 
 1. Query the number of rows in the **flightinfo** table to verify that it is still accessible:
 

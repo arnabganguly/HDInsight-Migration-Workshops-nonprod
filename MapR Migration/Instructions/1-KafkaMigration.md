@@ -25,7 +25,7 @@ In the *live* MapR system the consumer is a Spark application, but for the purpo
 
 ![The structure of the existing Kafka system running on MapR](../Images/1-KafkaSystem.png)
 
-1. On your desktop, open a **Command Prompt** window and sign in to the MapR virtual machine. Sign in as **azureuser** with the password you specified when you set up the MapR virtual machine. Replace *\<ip_address`>* with the IP address of the virtual machine.
+1. On your desktop, open a **Command Prompt** window and sign in to the MapR virtual machine. Sign in as **azureuser** with the password you specified when you set up the MapR virtual machine. Replace *\<ip_address\>* with the IP address of the virtual machine.
 
     ```PowerShell
     ssh azureuser@<ip address>
@@ -49,7 +49,7 @@ In the *live* MapR system the consumer is a Spark application, but for the purpo
 
     This folder contains two applications:
 
-    1. **Producer.jar**, that simulates incoming data from flights and airports (this application reads data from a CSV file rather than receiving events). This app writes messages to the **flights** topic.
+    1. **EventProducer.jar**, that simulates incoming data from flights and airports (this application reads data from a CSV file rather than receiving events). This app writes messages to the **flights** topic.
 
     1. **Consumer.jar**, which subscribes to the **flights** topic and displays the contents of the messages it reads.
 
@@ -109,7 +109,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
      ![The **Home** link on a page in the Azure portal](../Images/1-Home-Link.png)
 
-1. On the Home page, hover over the **Resource Groups** icon, and then select **Create**:
+1. On the Home page, hover over the **Resource groups** icon, and then select **Create**:
 
     ![The Resource Groups icon on the Home page in the Azure portal](../Images/1-Home-Page.png)
 
@@ -123,9 +123,9 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
     ![The New page in the Azure portal. The user has selected **Virtual Network**](../Images/1-New-Virtual-Network.png)
 
-1. On the **Virtual Network** page, select **Create**
+1. On the **Virtual Network** page, select **Create**.
 
-1. On the **Basics** tab of the **Create virtual network** page, enter the following settings, and then select **Next: IP Addresses**:
+1. On the **Basics** tab of the **Create virtual network** page, enter the following settings, and then select **Next : IP Addresses**:
 
     | Field | Value|
     |-|-|
@@ -155,7 +155,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
 1. On the **Storage account** page, select **Create**.
 
-1. On the **Basics** tab of the **Create storage account** page, enter the following settings, and then select **Next: Networking**:
+1. On the **Basics** tab of the **Create storage account** page, enter the following settings, and then select **Next : Networking**:
 
     | Field | Value|
     |-|-|
@@ -167,11 +167,11 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     | Account Kind | StorageV2 (general purpose v2) |
     | Replication | Zone-redundant storage (ZRS) |
 
-1. On the **Networking** tab, accept the default settings, and then select **Next: Data protection**.
+1. On the **Networking** tab, accept the default settings, and then select **Next : Data protection**.
 
-1. On the **Data protection** tab, accept the default settings, and then select **Next: Advanced**.
+1. On the **Data protection** tab, accept the default settings, and then select **Next : Advanced**.
 
-1. On **Advanced** tab, under **Data Lake Storage Gen2**, select **Enabled** for **Hierarchical namespace**. Leave all other settings at their default values, and then select **Review + create**
+1. On **Advanced** tab, under **Data Lake Storage Gen2**, select **Enabled** for **Hierarchical namespace**. Leave all other settings at their default values, and then select **Review + create**.
 
 1. On the validation page, select **Create**, and wait while the storage account is created.
 
@@ -183,7 +183,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
 1. On the **User Assigned Managed Identity** page, select **Create**.
 
-1. On the **Basics** tab of the **Create User Assigned Managed Identity** page, enter the following settings, and then select **Next: Networking**:
+1. On the **Basics** tab of the **Create User Assigned Managed Identity** page, enter the following settings, and then select **Next : Networking**:
 
     | Field | Value|
     |-|-|
@@ -196,11 +196,11 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
 1. On the Home page in the Azure portal, under **Recent resources**, select **clusterstorage*9999***.
 
-1. On the **clusterstorage*9999*** page select **Access Control (IAM)**:
+1. On the **clusterstorage*9999*** page, select **Access Control (IAM)**:
 
     ![The **clusterstorage*9999*** page in the Azure portal. The user has selected **Access Control (IAM)**](../Images/1-Storage-Account.png)
 
-1. On the **clusterstorage*9999* | Access Control (IAM)** page select **Add**, and then select **Add role assignment**:
+1. On the **clusterstorage*9999* | Access Control (IAM)** page, select **Add**, and then select **Add role assignment**:
 
 
     ![The **clusterstorage*9999* | Access Control (IAM)** page in the Azure portal. The user has selected **Add role assignment**](../Images/1-Add-Role-Assignment.png)
@@ -209,7 +209,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
     | Field | Value|
     |-|-|
-    | Role | Storage Blob Data Ower |
+    | Role | Storage Blob Data Owner |
     | Assign access to | User assigned managed identity |
     | Subscription | Select your subscription |
     | Select | clustermanagedid |
@@ -226,7 +226,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
 
 1. On the **Azure HDInsight** page, select **Create**.
 
-1. On the **Basics** tab of the **Create HDInsight cluster** page, enter the following settings, and then select **Next: Storage**:
+1. On the **Basics** tab of the **Create HDInsight cluster** page, enter the following settings, and then select **Next : Storage**:
 
     | Field | Value|
     |-|-|
@@ -242,7 +242,7 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     | Secure Shell (SSH) username | sshuser |
     | Use cluster login password for SSH | checked |
 
-1. On the **Storage** tab, enter the following settings, and then select **Next: Security + networking**:
+1. On the **Storage** tab, enter the following settings, and then select **Next : Security + networking**:
 
     | Field | Value|
     |-|-|
@@ -252,9 +252,9 @@ In this task, you'll create a new virtual network and subnet to host the cluster
     | User-assigned managed identity | clustermanagedid |
     | SQL database for Ambari | leave blank |
     | SQL database for Hive | leave blank |
-    | SQL database for Ooozie | leave blank |
+    | SQL database for Oozie | leave blank |
 
-1. On the **Security + networking** tab, enter the following settings, and then select **Next: Configuration + pricing**
+1. On the **Security + networking** tab, enter the following settings, and then select **Next : Configuration + pricing**
 
     | Field | Value|
     |-|-|
@@ -304,7 +304,7 @@ In this task, you'll configure peering between the virtual network containing th
     | Traffic to remote virtual network | Allow (default) |
     | Traffic forwarded from remote virtual network | Allow (default) |
     | Virtual network gateway | None (default) |
-    | remote virtual network: Peering link name | maprvnet-to-clustervnet |
+    | Remote virtual network: Peering link name | maprvnet-to-clustervnet |
     | Virtual network deployment model | Resource manager |
     | I know my resource ID | Leave unchecked |
     | Subscription | Select your subscription |
@@ -344,7 +344,7 @@ In this task, you'll configure peering between the virtual network containing th
 
 1. On the configuration page, select **Restart**, and then select **Restart All Affected** to restart the Kafka service with the new configuration. In the **Confirmation** dialog box, select **Confirm Restart All**.
 
-1. In the **Background Operations** dialog, wait while the service restarts, and then select **OK**.
+1. In the **Background Operations** dialog box, wait while the service restarts, and then select **OK**.
 
     ![The **Background Operations** page in Ambari. The Kafka service has restarted.](../Images/1-Restart-Kafka.png)
 
@@ -354,7 +354,7 @@ In this task, you'll configure peering between the virtual network containing th
 
 1. Return to the **Command Prompt** window displaying the SSH connection to the MapR virtual machine.
 
-1. Run the following command to create a bash shell running as root.
+1. Run the following command to create a bash shell running as root. Enter your password when prompted.
 
     ```bash
     sudo bash
@@ -386,7 +386,7 @@ In this task, you'll configure peering between the virtual network containing th
     # Entries for worker nodes
     10.3.0.14 wn0-kafkac
     10.3.0.13 wn1-kafkac
-    10.3.0.8  wn1-kafkac
+    10.3.0.8  wn2-kafkac
     ```
 
 1. Run the **ifconfig** command, and make a note of the **inet addr** field for the **eth0** device. This is the private IP address of the MapR virtual machine. The text below shows an example of the output generated by the **ifconfig** command. In this example, the **inet addr** is 10.1.0.4.

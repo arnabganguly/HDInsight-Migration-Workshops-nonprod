@@ -34,7 +34,7 @@ In a *fully migrated* system, the Spark application would run on an HDInsight Sp
 
 ---
 
-1. If you haven't already done so, on your desktop, open a **Command Prompt** window and sign in to the MapR virtual machine. The username is **azureuser***. Replace *\<ip_address`>* with the IP address of the virtual machine.
+1. If you haven't already done so, on your desktop, open a **Command Prompt** window and sign in to the MapR virtual machine. The username is **azureuser***. Replace *\<ip_address\>* with the IP address of the virtual machine.
 
     ```PowerShell
     ssh azureuser@<ip address>
@@ -306,7 +306,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     | Identity | clustermanagedid |
     | SQL database for Ambari | leave blank |
     | SQL database for Hive | hiveserver*9999*/hivedb*9999* |
-    | Authenticate SQL Database | Select **Authenticate**. On the **Authenticate** page, enter **azuresa** for the username, provide the password you created for this user in the database, and then click **Test Connection**. You might receive a warning informing you that Azure couldn't currently validate the database credentials, but that you can proceed. Click **Select** to finish.
+    | Authenticate SQL Database | Select **Authenticate**. On the **Authenticate** page, enter **azuresa** for the username, provide the password you created for this user in the database, and then click **Test connection**. You might receive a warning informing you that Azure couldn't currently validate the database credentials, but that you can proceed. Click **Select** to finish.
     | SQL database for Ooozie | leave blank |
 
 1. On the **Security + networking** tab, enter the following settings, and then select **Next: Configuration + pricing**
@@ -355,7 +355,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
 1. Return to the **Command Prompt** window displaying the SSH connection to the MapR virtual machine.
 
-1. On the MapR virtual machine. run the following command to create a bash shell running as root.
+1. On the MapR virtual machine, run the following command to create a bash shell running as root.
 
     ```bash
     sudo bash
@@ -467,15 +467,23 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
 
 1. Switch back to Ambari for the HDInsight cluster.
 
-1. In the left-hand pane, select **Hive**. In the main pane, on the **CONFIGS** tab, in the search box, enter **strict**. 
+1. In the left-hand pane, select **Hive**. In the main pane, on the **CONFIGS** tab, in the **filter** box, enter **strict**. 
 
-1. Under **Advanced hive-interactive-site** and **Advanced hive-site**, change the **hive.strict.managed.tables** setting to **false**:
+1. Under **Advanced hive-interactive-site** and **Advanced hive-site**, change the **hive.strict.managed.tables** setting to **false**, and select **SAVE**:
 
     ![The **CONFIGS** page for Hive in Ambari. The user has disabled strict mode for managed tables.](../Images/2-Ambari-Hive-Config.png)
 
-1. Select **Save**, select **RESTART**, and then select **Restart All Affected**. 
+1. In the **Confirmation** dialog box, select **SAVE**. 
 
-1. In the **Confirmation** dialog box, select **CONFIRM RESTART ALL**, and Wait for the services to restart before continuing.
+1. In the **Save Confirmation** dialog box, select **OK**.
+
+1. In the **Configurations** dialog box, select **PROCEED ANYWAY**.
+
+1. In the **Save Configuration Changes** dialog box, select **OK**.
+
+1. Select **RESTART**, and then select **Restart All Affected**.
+
+1. In the **Confirmations** dialog box, select **CONFIRM RESTART ALL**, and wait for the services to restart before continuing.
 
 ## Task 3: Copy data from the MapR cluster to the HDInsight LLAP cluster
 
@@ -642,7 +650,7 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
 1. Import the data for the **flightinfo** table from the **staging** folder:
 
     ```sql
-    import table flightinfo from  '/staging/todaysinfo';
+    import table flightinfo from '/staging/todaysinfo';
     ```
 
 1. Disconnect from **beeline**:
@@ -698,7 +706,7 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
     1. Delete the existing data from the **staging** directory in the HDInsight cluster:
 
         ```bash
-        hdfs dfs -D fs.AbstractFileSystem.wasb.Impl=org.apache.hadoop.fs.azure.Wasb \  
+        hdfs dfs -D fs.AbstractFileSystem.wasb.Impl=org.apache.hadoop.fs.azure.Wasb \
             -D fs.azure.account.key.clusterstorage<9999>.blob.core.windows.net='<key>' \
             -rm -R wasbs://cluster<9999>@clusterstorage<9999>.blob.core.windows.net/staging
         ```

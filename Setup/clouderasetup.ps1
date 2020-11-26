@@ -178,7 +178,7 @@ $disk = Get-AzDisk `
     -DiskName $osDiskName
 
 $VirtualMachine = Set-AzVMOSDisk `
-   -VM $VirtualMachine `
+    -VM $VirtualMachine `
     -ManagedDiskId $disk.Id `
     -CreateOption Attach -Linux
 

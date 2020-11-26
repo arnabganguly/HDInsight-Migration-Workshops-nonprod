@@ -61,9 +61,9 @@ Perform the following tasks:
 
     This command opens a new browser window, and gives you more space to run and view scripts.
 
-1. Run the commands shown below to retrieve the script that create the resources and the virtual machine that will be used to run Cloudera.
+1. Run the command shown below to retrieve the script that create the resources and the virtual machine that will be used to run Cloudera.
 
-    **NOTE: REPLACE THE URL BELOW WITH THE ADDRESS OF THE GITHUB REPO HOLDING THE SCRIPT**
+    **NOTE: BEFORE PUBLISHING THIS WORKSHOP, REPLACE THE URL BELOW WITH THE ADDRESS OF THE GITHUB REPO HOLDING THE SCRIPT**
     ```PowerShell
     wget https://raw.githubusercontent.com/JohnPWSharp/MigrationWorkshop/main/clouderasetup.ps1
     ```
@@ -104,7 +104,7 @@ Perform the following tasks:
     ssh root<ip address>
     ```
 
-1. At the *bash* prompt, run the following commands to set the password for the **azureuser** account. Provide a password of your own choosing. You'll use this account rather than root for running the Cloudera services.
+1. At the *bash* prompt, run the following command to set the password for the **azureuser** account. Provide a password of your own choosing. You'll use this account rather than root for running the Cloudera services.
 
     ```bash
     passwd azureuser
@@ -115,6 +115,9 @@ Perform the following tasks:
     ```bash
     exit
     ```
+
+
+1. In the Azure portal, close the PowerShell pane.
 
 1. On the desktop, open a Web browser, and navigate to the URL <ip-address>:7180, where *\<ip-address\>* is the IP address of the virtual machine you noted earlier. You should see the Cloudera Manager login page.
 
@@ -147,14 +150,3 @@ Perform the following tasks:
     ---
 
     ![The Cluster Manager. All services have started successfully.](../Images/0-Cloudera-Services-Running.png)
-
-1. In the Azure portal, close the PowerShell pane.
-
-
-
-
-
-
-
-
-

@@ -55,326 +55,36 @@ Perform the following tasks:
 
     ![The Cloud Shell dropdown. The user has selected **PowerShell**.](../Images/0-PowerShell.png)
 
-1. Run the commands shown below to create the managed disk used by the virtual machine that will be used to run MapR. The script creates the managed disk from a pre-created image. Replace *\<your-subscription-id\>* with the subscription ID you noted previously, and set *\<SAS\>* to the SAS token for the pre-created image (your instructor will provide this URL). You should also change the *location* variable to match your nearest Azure region:
+1. Run the command shown below to retrieve the script that create the resources and the virtual machine that will be used to run the MapR services.
 
+    **NOTE: BEFORE PUBLISHING THIS WORKSHOP, REPLACE THE URL BELOW WITH THE ADDRESS OF THE GITHUB REPO HOLDING THE SCRIPT**
     ```PowerShell
-    #Provide the subscription Id
-    $subscriptionId = '<your-subscription-id>'
-
-    #Specify the location for creating resources
-    $location = "East US"
-
-    #SAS URL of pre-created image
-    $sourceDiskSAS = '<SAS>'    
-
-    $targetRG = 'MapRrg'
-    $targetLocation = $location
-    $targetOS = 'Linux'
-    $osDiskName = 'MapRdisk'
-    $vhdSizeBytes = 68719477248
-
-    #Create a resource group (MapRrg) for holding the managed disk
-    Select-AzSubscription -SubscriptionId $SubscriptionId
-    New-AzResourceGroup -Name $targetRG -Location $targetLocation
-
-    # Create the managed disk
-    $targetDiskConfig = New-AzDiskConfig `
-        -SkuName 'Standard_LRS' `
-        -osType 'Linux' `
-        -UploadSizeInBytes $vhdSizeBytes `
-        -Location $targetLocation `
-        -CreateOption 'Upload'
-
-    $targetDisk = New-AzDisk -ResourceGroupName $targetRG `
-        -DiskName $osDiskName `
-        -Disk $targetDiskConfig
-
-    $targetDiskSas = Grant-AzDiskAccess -ResourceGroupName $targetRG `
-        -DiskName $osDiskName `
-        -DurationInSecond 86400 -Access 'Write'
-
-    #Copy the contents of the pre-created disk to the managed disk
-    azcopy copy $sourceDiskSAS $targetDiskSas.AccessSAS `
-        --blob-type PageBlob
-
-    Revoke-AzDiskAccess -ResourceGroupName $targetRG `
-        -DiskName $osDiskName
+    wget https://raw.githubusercontent.com/JohnPWSharp/MigrationWorkshop/main/maprsetup.ps1
     ```
 
-    ---
+1. In the Cloud Shell toolbar, select **Open editor**.
 
-    **NOTE**
+    ![The Cloud Shell toolbar in the Azure portal. The user has selected **Open editor**.](../Images/0-OpenEditor.png)
 
-    The MapR virtual machine created in the following steps uses its own managed disk based on a copy of the disk you have just created. If you need to rebuild or reset the virtual machine at any point, you can start at the following step. You don't need to copy the disk from the SAS URL again.
+1. In the **Files** pane of the editor, select **maprsetup.ps1** to open the setup script. In the script, replace **\<your-subscription-id\>** with your subscription id, and replace **\<OS Disk SAS\>** and **\<Data Disk SAS\>** with the SAS URLs of the MapR disks that will be used to create the virtual machine. **Your instructor should provide you with these URLs**.
 
-    ---
 
-1. Run the following commands to set up the parameters and configuration settings for the Contoso virtual machine and its associated resources. 
+    ![The Cloud Shell editor. The user has opened the **maprsetup.ps1** script.](../Images/0-EditFile.png)
 
-    ```PowerShell
-    #Provide the name of your resource group
-    $resourceGroupName = 'workshoprg'
 
-    #Provide the name of the resource group and name of the the managed disk 
-    # on which the VM is based.
-    #These steps assume that the student hasn't modified the values for the 
-    # resource group or disk name in the previous step
-    $diskResourceGroupName = 'MapRrg'
-    $sourceDiskName = 'MapRdisk'
+1. Press **CTRL-S** to save the file, and then press **CTRL+Q** to leave the editor.
 
-    #Provide the name of the OS disk that will be created using the snapshot
-    $osDiskName = 'MapRdisk'
-
-    #Provide the name of a virtual network and subnet 
-    # where virtual machine will be created
-    $virtualNetworkName = 'MapRvmvnet'
-    $subnetName = 'MapRsubnet'
-
-    #VNet prefix for the VM
-    $vnetprefix = '10.10.0.0'
-
-    #Network security group name for the VNet
-    $nsgName = 'MapRnsg'
-
-    #Provide the name of the virtual machine
-    $virtualMachineName = 'MapRvm'
-
-    #Provide the size of the virtual machine
-    $virtualMachineSize = 'Standard_D8s_v4'
-    ```
-1. Create the resource group that will hold the virtual machine and resources:
+1. Run the script with the following command:
 
     ```PowerShell
-    #Set the context to the subscription Id where the resources will be created
-    Select-AzSubscription -SubscriptionId $SubscriptionId
-
-    #Create the resource group
-    New-AzResourceGroup -Name $resourceGroupName -Location $location
+    .\maprsetup.ps1
     ```
 
-1. Create and configure a virtual network for the virtual machine
+    As the script runs, you will see various messages when the resources are created. The script will take about 5 minutes to complete. When it has finished, it will display the IP address of the new virtual machine. Make a note of this address.
 
-    ```PowerShell
-    #Create a virtual network for the VM
-    $virtualNetwork = New-AzVirtualNetwork `
-        -ResourceGroupName $resourceGroupName `
-        -Location $location `
-        -Name $virtualNetworkName `
-        -AddressPrefix $vnetprefix/16
+    ![The Azure Cloud Shell in the Azure portal. The script has completed. The IP address of the new virtual machine is highlighted.](../Images/0-ScriptCompleted.png)
 
-    #Create a network security group for the VNet 
-    # and add rules to allow ports required to access MapR
-    $nsg = New-AzNetworkSecurityGroup `
-        -Name $nsgName `
-        -ResourceGroupName $resourceGroupName `
-        -Location $location
-    
-    $nsg | Add-AzNetworkSecurityRuleConfig `
-        -Name 'SSHRule' `
-        -Access Allow `
-        -Protocol Tcp `
-        -Direction Inbound `
-        -Priority 100 `
-        -SourceAddressPrefix Internet `
-        -SourcePortRange * `
-        -DestinationAddressPrefix * `
-        -DestinationPortRange 22 | Set-AzNetworkSecurityGroup
-
-    $nsg | Add-AzNetworkSecurityRuleConfig `
-        -Name 'MapRManager' `
-        -Access Allow `
-        -Protocol Tcp `
-        -Direction Inbound `
-        -Priority 350 `
-        -SourceAddressPrefix Internet `
-        -SourcePortRange * `
-        -DestinationAddressPrefix * `
-        -DestinationPortRange 7180 | Set-AzNetworkSecurityGroup
-
-    $nsg | Add-AzNetworkSecurityRuleConfig `
-        -Name 'SCM' `
-        -Access Allow `
-        -Protocol Tcp `
-        -Direction Inbound `
-        -Priority 360 `
-        -SourceAddressPrefix Internet `
-        -SourcePortRange * `
-        -DestinationAddressPrefix * `
-        -DestinationPortRange 7182 | Set-AzNetworkSecurityGroup
-
-    $nsg | Add-AzNetworkSecurityRuleConfig `
-        -Name 'KafkaBroker' `
-        -Access Allow `
-        -Protocol Tcp `
-        -Direction Inbound `
-        -Priority 370 `
-        -SourceAddressPrefix Internet `
-        -SourcePortRange * `
-        -DestinationAddressPrefix * `
-        -DestinationPortRange 9092 | Set-AzNetworkSecurityGroup
-
-    $nsg | Add-AzNetworkSecurityRuleConfig `
-        -Name 'Zookeeper' `
-        -Access Allow `
-        -Protocol Tcp `
-        -Direction Inbound `
-        -Priority 380 `
-        -SourceAddressPrefix Internet `
-        -SourcePortRange * `
-        -DestinationAddressPrefix * `
-        -DestinationPortRange 2181 | Set-AzNetworkSecurityGroup
-
-    $nsg | Add-AzNetworkSecurityRuleConfig `
-        -Name 'Port8080' `
-        -Access Allow `
-        -Protocol Tcp `
-        -Direction Inbound -Priority 390 `
-        -SourceAddressPrefix Internet `
-        -SourcePortRange * `
-        -DestinationAddressPrefix * `
-        -DestinationPortRange 8080 | Set-AzNetworkSecurityGroup
-
-    $nsg | Add-AzNetworkSecurityRuleConfig `
-        -Name 'Jupyter' `
-        -Access Allow `
-        -Protocol Tcp `
-        -Direction Inbound -Priority 400 `
-        -SourceAddressPrefix Internet `
-        -SourcePortRange * `
-        -DestinationAddressPrefix * `
-        -DestinationPortRange 8888 | Set-AzNetworkSecurityGroup
-
-    #Create a subnet for the VM, and associate the NSG with the subnet
-    $subnetConfig = Add-AzVirtualNetworkSubnetConfig `
-        -Name $subnetName `
-        -AddressPrefix $vnetprefix/24 `
-        -VirtualNetwork $virtualNetwork `
-        -NetworkSecurityGroup $nsg
-
-    $virtualNetwork | Set-AzVirtualNetwork
-    ```
-
-1. Create a storage account for holding boot diagnostics for the virtual machine
-
-    ```PowerShell
-    #Create a Gen1 storage account with a unique name
-    [string]$rnd = Get-Random -Maximum 10000
-    $storageAccount = New-AzStorageAccount `
-        -AccountName ($VirtualMachineName.ToLower() + 'storage' + $rnd) `
-        -ResourceGroupName $resourceGroupName `
-        -Location $location `
-        -Kind Storage `
-        -SkuName Standard_GRS 
-    ```
-
-1. Create a disk containing the image for the virtual machine:
-
-    ```PowerShell
-    #TBD: THIS MAY NEED TO CHANGE, DEPENDING ON WHERE THE SOURCE DISK IS HOSTED
-    #Get the details of the disk containing the image for the virtual machine
-    $sourceDisk = Get-AzDisk `
-        -ResourceGroupName $diskResourceGroupName `
-        -DiskName $sourceDiskName
-
-    #Create a new disk for the virtual machine.
-    #The disk must be big enough to hold the image
-    $targetDiskConfig = New-AzDiskConfig `
-        -SkuName 'Standard_LRS' `
-        -osType 'Linux' `
-        -UploadSizeInBytes $($sourceDisk.DiskSizeBytes + 512) `
-        -Location $Location `
-        -CreateOption 'Upload'
-
-    $targetDisk = New-AzDisk -ResourceGroupName $resourceGroupName `
-        -DiskName $osDiskName `
-        -Disk $targetDiskConfig
-
-    #Copy the image from the source disk to the new disk
-    $sourceDiskSas = Grant-AzDiskAccess -ResourceGroupName $diskResourceGroupName `
-        -DiskName $sourceDiskName `
-        -DurationInSecond 86400 -Access 'Read'
-
-    $targetDiskSas = Grant-AzDiskAccess -ResourceGroupName $resourceGroupName `
-        -DiskName $osDiskName `
-        -DurationInSecond 86400 -Access 'Write'
-
-    azcopy copy $sourceDiskSas.AccessSAS $targetDiskSas.AccessSAS `
-        --blob-type PageBlob
-
-    Revoke-AzDiskAccess -ResourceGroupName $diskResourceGroupName `
-        -DiskName $sourceDiskName
-
-    Revoke-AzDiskAccess -ResourceGroupName $resourceGroupName `
-        -DiskName $osDiskName
-   
-    $disk = Get-AzDisk `
-        -ResourceGroupName $resourceGroupName `
-        -DiskName $osDiskName
-    ```
-
-1. Create the virtual machine using the disk and network resources your just configured:
-
-    ```PowerShell
-    #Initialize virtual machine configuration
-    $VirtualMachine = New-AzVMConfig -VMName $virtualMachineName `
-        -VMSize $virtualMachineSize
-
-    #Use the Managed Disk Resource Id to attach it 
-    # to the virtual machine configuration
-    $VirtualMachine = Set-AzVMOSDisk `
-       -VM $VirtualMachine `
-        -ManagedDiskId $disk.Id `
-        -CreateOption Attach -Linux
-
-    #Create a public IP for the VM
-    $publicIp = New-AzPublicIpAddress `
-        -Name ($VirtualMachineName.ToLower() + '_ip') `
-        -ResourceGroupName $resourceGroupName `
-        -Location $location `
-        -AllocationMethod Static
-
-    #Get the virtual network where virtual machine will be hosted
-    $vnet = Get-AzVirtualNetwork `
-        -Name $virtualNetworkName `
-        -ResourceGroupName $resourceGroupName
-
-    # Create NIC for the first subnet of the virtual network
-    $nic = New-AzNetworkInterface `
-        -Name ($VirtualMachineName.ToLower() + '_nic') `
-        -ResourceGroupName $resourceGroupName `
-        -Location $location `
-        -SubnetId $vnet.Subnets[0].Id -PublicIpAddressId $publicIp.Id
-
-    # Add the NIC to the virtual machine configuration
-    $VirtualMachine = Add-AzVMNetworkInterface `
-        -VM $VirtualMachine `
-        -Id $nic.Id
-    
-    #Set the boot diagnostics storage account for the VM
-    Set-AzVMBootDiagnostic `
-        -VM $VirtualMachine `
-        -Enable `
-        -ResourceGroupName $resourceGroupName `
-        -StorageAccountName $storageAccount.StorageAccountName
-
-    #Create the virtual machine
-    New-AzVM `
-        -VM $VirtualMachine `
-        -ResourceGroupName $resourceGroupName `
-        -Location $location
-    ```
-
-1. When the virtual machine has been created, find the public IP address. Make a note of the IP address because you will need it later.
-
-    ```PowerShell
-    $ipAddr = (Get-AzPublicIpAddress `
-        -Name ($VirtualMachineName.ToLower() + '_ip') `
-        -ResourceGroupName $resourceGroupName).IpAddress
-
-    echo $ipAddr
-    ```
-
-1. Connect using SSH as the **root** user. The password is **Pa55w.rdDemo**. Enter **yes** when prompted to connect.
+1. Connect using SSH as the **azureuser** user as shown below. Replace **\<ip address\>** with the IP address of the virtual machine. The password is **Pa55w.rdDemo**. Enter **yes** when prompted to connect.
 
     ---
 
@@ -385,13 +95,13 @@ Perform the following tasks:
     ---
 
     ```PowerShell
-    ssh root@$ipAddr
+    ssh azureuser<ip address>
     ```
 
-1. At the *bash* prompt, run the following commands to set the password for the **azureuser** account. Provide a password of your own choosing. You'll use this account rather than root for running the MapR services.
+1. At the *bash* prompt, run the following command to change the password for the **azureuser** account. Provide a password of your own choosing.
 
     ```bash
-    passwd azureuser
+    passwd
     ```
 
 1. Run the following command to sign out from the virtual machine and return to the PowerShell prompt:
@@ -400,45 +110,30 @@ Perform the following tasks:
     exit
     ```
 
-1. On the desktop, open a Web browser, and navigate to the URL <ip-address>:7180, where *\<ip-address\>* is the IP address of the virtual machine you noted earlier. You should see the MapR Manager login page.
-
-    ---
-
-    **NOTE:** 
-    Again. you may need to wait for a minute while the MapR Manager is initialized.
-    
-    ---
-    
-    ![The MapR Manager login page in the web browser.](../Images/0-MapR-Login.png)
-
-1. Log in with the username **admin** with password **admin**.
-
-1. In the MapR Manager, select the drop-down menu for the **MapR Management Service**, select **Start**, and wait for the management service to start up correctly.
-
-    ![The MapR Management Service menu. The user has selected **Start**.](../Images/0-Start-MapR-Manager.png)
-
-1. Select the drop-down menu for the **Cluster 1** cluster, and wait for the various services (Zookeeper, HDFS, Kafka, HBase, Yarn, Spark, and Hive) to start.
-
-    ![The Cluster menu. The user has selected **Start**.](../Images/0-Start-MapR-Services.png)
-
-1. Verify that all services are shown as running correctly.
-
-    ---
-
-    **NOTE:** 
-    You may receive a warning from HDFS and/or Zookeeper initially, but they should clear after a minute or so.
-
-    ---
-
-    ![The Cluster Manager. All services have started successfully.](../Images/0-MapR-Services-Running.png)
-
 1. In the Azure portal, close the PowerShell pane.
 
+1. On the desktop, open a Web browser, and navigate to the URL https://<ip-address>:9443, where *\<ip-address\>* is the IP address of the virtual machine you noted earlier. You should see the MapR sign in page.
+
+    ---
+
+    **NOTE:** 
+    You may be warned by the browser that the web site is unsafe. This is because the SSL certificate validates the connection to the server by name (onprem.internal.cloudapp.net) but you are accessing it using its IP address. You can ignore this warning.
+    
+    ---
+    
+    ![The MapR sign in page in the web browser.](../Images/0-MapRLogin.png)
+
+1. Sign in with the username **mapr** with password **Pa55w.rdDemo**.
+
+1. on the **Installer**, select **Startup**.
+
+    ![The MapR **Installer** page. The user has selected **Startup**.](../Images/0-Mapr-Installer.png)
 
 
+1. On the **Authentication** page, set **SSH Username** to **azureuser**, provide the password you just set for this user in the **SSH Password** and **Verify SSH Password** boxes, and then select **Startup**.
 
+    ![The MapR **Authentication** page. The user is starting MapR as **azureuser**.](../Images/0-Mapr-Authentication.png)
 
+1. Wait while the MapR services are started. When startup is complete, you'll be returned to the **Installer** page.
 
-
-
-
+    ![The MapR **Installer** page. The MapR services have started successfully.](../Images/0-MapR-Services-Running.png)

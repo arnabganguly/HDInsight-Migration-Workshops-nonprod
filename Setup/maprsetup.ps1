@@ -3,8 +3,9 @@
 # Provide the subscription Id
 $subscriptionId = '<your-subscription-id>'
 
-# SAS URL of pre-created image
-$sourceDiskSAS = '<SAS>'   
+# SAS URLs of pre-created images for OS and Data disks
+$sourceOSDiskSAS = '<OS Disk SAS>'
+$sourceDataDiskSAS = '<Data Disk SAS>'
 
 # Specify the location for creating resources
 $location = "East US"
@@ -31,36 +32,60 @@ $nsgName = 'maprnsg'
 # **DON'T CHANGE ANYTHING BELOW THIS POINT**
 
 $targetOS = 'Linux'
-$osDiskName = 'maprdisk'
-$vhdSizeBytes = 68719477248
+$osDiskName = 'maprosdisk'
+$dataDiskName = 'maprdatadisk'
+$osVhdSizeBytes = 68719477248
+$dataVhdSizeBytes = 137438953984
 
 # Create a resource group for holding the virtual machine
 Select-AzSubscription -SubscriptionId $SubscriptionId
 New-AzResourceGroup -Name $resourceGroupName -Location $location
 
-# Create the managed disk
-$targetDiskConfig = New-AzDiskConfig `
+# Create the managed OS disk
+$targetOSDiskConfig = New-AzDiskConfig `
     -SkuName 'Standard_LRS' `
     -osType 'Linux' `
-    -UploadSizeInBytes $vhdSizeBytes `
+    -UploadSizeInBytes $osVhdSizeBytes `
     -Location $location `
     -CreateOption 'Upload'
 
-$targetDisk = New-AzDisk -ResourceGroupName $resourceGroupName `
+$targetOSDisk = New-AzDisk -ResourceGroupName $resourceGroupName `
     -DiskName $osDiskName `
-    -Disk $targetDiskConfig
+    -Disk $targetOSDiskConfig
 
-$targetDiskSas = Grant-AzDiskAccess -ResourceGroupName $resourceGroupName `
+$targetOSDiskSas = Grant-AzDiskAccess -ResourceGroupName $resourceGroupName `
     -DiskName $osDiskName `
     -DurationInSecond 86400 -Access 'Write'
 
-# Copy the contents of the pre-created disk to the managed disk
-azcopy copy $sourceDiskSAS $targetDiskSas.AccessSAS `
+# Copy the contents of the pre-created OS disk to the managed OS disk
+azcopy copy $sourceOSDiskSAS $targetOSDiskSas.AccessSAS `
     --blob-type PageBlob
 
 Revoke-AzDiskAccess -ResourceGroupName $resourceGroupName `
     -DiskName $osDiskName
-  
+
+# Create the managed data disk and copy the contents from the pre-created data disk
+$targetDataDiskConfig = New-AzDiskConfig `
+    -SkuName 'Standard_LRS' `
+    -osType 'Linux' `
+    -UploadSizeInBytes $dataVhdSizeBytes `
+    -Location $location `
+    -CreateOption 'Upload'
+
+$targetOSDisk = New-AzDisk -ResourceGroupName $resourceGroupName `
+    -DiskName $dataDiskName `
+    -Disk $targetDataDiskConfig
+
+$targetDataDiskSas = Grant-AzDiskAccess -ResourceGroupName $resourceGroupName `
+    -DiskName $dataDiskName `
+    -DurationInSecond 86400 -Access 'Write'
+
+azcopy copy $sourceDataDiskSAS $targetDataDiskSas.AccessSAS `
+    --blob-type PageBlob
+
+Revoke-AzDiskAccess -ResourceGroupName $resourceGroupName `
+    -DiskName $dataDiskName
+
 # Create a virtual network for the VM
 $virtualNetwork = New-AzVirtualNetwork `
     -ResourceGroupName $resourceGroupName `
@@ -86,7 +111,7 @@ $nsg | Add-AzNetworkSecurityRuleConfig `
     -DestinationPortRange 22 | Set-AzNetworkSecurityGroup
 
 $nsg | Add-AzNetworkSecurityRuleConfig `
-    -Name 'ClouderaManager' `
+    -Name 'MapRManager' `
     -Access Allow `
     -Protocol Tcp `
     -Direction Inbound `
@@ -94,10 +119,10 @@ $nsg | Add-AzNetworkSecurityRuleConfig `
     -SourceAddressPrefix Internet `
     -SourcePortRange * `
     -DestinationAddressPrefix * `
-    -DestinationPortRange 7180 | Set-AzNetworkSecurityGroup
+    -DestinationPortRange 9443 | Set-AzNetworkSecurityGroup
 
 $nsg | Add-AzNetworkSecurityRuleConfig `
-    -Name 'SCM' `
+    -Name 'HBase' `
     -Access Allow `
     -Protocol Tcp `
     -Direction Inbound `
@@ -105,10 +130,10 @@ $nsg | Add-AzNetworkSecurityRuleConfig `
     -SourceAddressPrefix Internet `
     -SourcePortRange * `
     -DestinationAddressPrefix * `
-    -DestinationPortRange 7182 | Set-AzNetworkSecurityGroup
+    -DestinationPortRange 16010 | Set-AzNetworkSecurityGroup
 
 $nsg | Add-AzNetworkSecurityRuleConfig `
-    -Name 'KafkaBroker' `
+    -Name 'HiatoryServer' `
     -Access Allow `
     -Protocol Tcp `
     -Direction Inbound `
@@ -116,7 +141,7 @@ $nsg | Add-AzNetworkSecurityRuleConfig `
     -SourceAddressPrefix Internet `
     -SourcePortRange * `
     -DestinationAddressPrefix * `
-    -DestinationPortRange 9092 | Set-AzNetworkSecurityGroup
+    -DestinationPortRange 19888 | Set-AzNetworkSecurityGroup
 
 $nsg | Add-AzNetworkSecurityRuleConfig `
     -Name 'Zookeeper' `
@@ -127,17 +152,17 @@ $nsg | Add-AzNetworkSecurityRuleConfig `
     -SourceAddressPrefix Internet `
     -SourcePortRange * `
     -DestinationAddressPrefix * `
-    -DestinationPortRange 2181 | Set-AzNetworkSecurityGroup
+    -DestinationPortRange 5181 | Set-AzNetworkSecurityGroup
 
 $nsg | Add-AzNetworkSecurityRuleConfig `
-    -Name 'Port8080' `
+    -Name 'WebServer' `
     -Access Allow `
     -Protocol Tcp `
     -Direction Inbound -Priority 390 `
     -SourceAddressPrefix Internet `
     -SourcePortRange * `
     -DestinationAddressPrefix * `
-    -DestinationPortRange 8080 | Set-AzNetworkSecurityGroup
+    -DestinationPortRange 8443 | Set-AzNetworkSecurityGroup
 
 $nsg | Add-AzNetworkSecurityRuleConfig `
     -Name 'Jupyter' `
@@ -148,6 +173,26 @@ $nsg | Add-AzNetworkSecurityRuleConfig `
     -SourcePortRange * `
     -DestinationAddressPrefix * `
     -DestinationPortRange 8888 | Set-AzNetworkSecurityGroup
+
+$nsg | Add-AzNetworkSecurityRuleConfig `
+    -Name 'SparkHistory' `
+    -Access Allow `
+    -Protocol Tcp `
+    -Direction Inbound -Priority 410 `
+    -SourceAddressPrefix Internet `
+    -SourcePortRange * `
+    -DestinationAddressPrefix * `
+    -DestinationPortRange 18080 | Set-AzNetworkSecurityGroup
+
+$nsg | Add-AzNetworkSecurityRuleConfig `
+    -Name 'KafkaBroker' `
+    -Access Allow `
+    -Protocol Tcp `
+    -Direction Inbound -Priority 420 `
+    -SourceAddressPrefix Internet `
+    -SourcePortRange * `
+    -DestinationAddressPrefix * `
+    -DestinationPortRange 9092 | Set-AzNetworkSecurityGroup
 
 # Create a subnet for the VM, and associate the NSG with the subnet
 $subnetConfig = Add-AzVirtualNetworkSubnetConfig `
@@ -173,14 +218,24 @@ $VirtualMachine = New-AzVMConfig -VMName $virtualMachineName `
 
 # Use the Managed Disk Resource Id to attach it 
 # to the virtual machine configuration
-$disk = Get-AzDisk `
+$osDisk = Get-AzDisk `
     -ResourceGroupName $resourceGroupName `
     -DiskName $osDiskName
 
+$dataDisk = Get-AzDisk `
+    -ResourceGroupName $resourceGroupName `
+    -DiskName $dataDiskName
+
 $VirtualMachine = Set-AzVMOSDisk `
-   -VM $VirtualMachine `
-    -ManagedDiskId $disk.Id `
+    -VM $VirtualMachine `
+    -ManagedDiskId $osDisk.Id `
     -CreateOption Attach -Linux
+    
+$VirtualMachine = Add-AzVMDataDisk `
+    -VM $VirtualMachine `
+    -ManagedDiskId $dataDisk.Id `
+    -CreateOption Attach `
+    -Lun 1
 
 # Create a public IP for the VM
 $publicIp = New-AzPublicIpAddress `
