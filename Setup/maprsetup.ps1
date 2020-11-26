@@ -17,7 +17,7 @@ $resourceGroupName = 'maprworkshoprg'
 $virtualMachineName = 'maprvm'
 
 # Provide the size of the virtual machine
-$virtualMachineSize = 'Standard_D8s_v4'
+$virtualMachineSize = 'Standard_E8-4s_v4'
 
 # Provide the name of a virtual network and subnet where virtual machine will be created
 $virtualNetworkName = 'maprvmvnet'
@@ -133,7 +133,7 @@ $nsg | Add-AzNetworkSecurityRuleConfig `
     -DestinationPortRange 16010 | Set-AzNetworkSecurityGroup
 
 $nsg | Add-AzNetworkSecurityRuleConfig `
-    -Name 'HiatoryServer' `
+    -Name 'HistoryServer' `
     -Access Allow `
     -Protocol Tcp `
     -Direction Inbound `
