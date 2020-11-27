@@ -55,7 +55,7 @@ Perform the following tasks:
 
     ![The Cloud Shell dropdown. The user has selected **PowerShell**.](../Images/0-PowerShell.png)
 
-1. In the Cloud Shell toolbar, select **Open a new session**.
+1. In the Cloud Shell toolbar, select **Open new session**.
 
     ![The Cloud Shell toolbar in the Azure portal. The user has selected **Open a new session**.](../Images/0-NewSession.png)
 
@@ -78,7 +78,7 @@ Perform the following tasks:
     ![The Cloud Shell editor. The user has opened the **clouderasetup.ps1** script.](../Images/0-EditFile.png)
 
 
-1. Press **CTRL-S** to save the file, and then press **CTRL+Q** to leave the editor.
+1. Press **CTRL-S** to save the file, and then press **CTRL-Q** to leave the editor.
 
 1. Run the script with the following command:
 
@@ -101,7 +101,7 @@ Perform the following tasks:
     ---
 
     ```PowerShell
-    ssh root<ip address>
+    ssh root@<ip address>
     ```
 
 1. At the *bash* prompt, run the following command to set the password for the **azureuser** account. Provide a password of your own choosing. You'll use this account rather than root for running the Cloudera services.
@@ -119,7 +119,7 @@ Perform the following tasks:
 
 1. In the Azure portal, close the PowerShell pane.
 
-1. On the desktop, open a Web browser, and navigate to the URL <ip-address>:7180, where *\<ip-address\>* is the IP address of the virtual machine you noted earlier. You should see the Cloudera Manager login page.
+1. On the desktop, open a Web browser, and navigate to the URL \<ip-address\>:7180, where *\<ip-address\>* is the IP address of the virtual machine you noted earlier. You should see the Cloudera Manager login page.
 
     ---
 
@@ -132,15 +132,15 @@ Perform the following tasks:
 
 1. Log in with the username **admin** with password **admin**.
 
-1. In the Cloudera Manager, select the drop-down menu for the **Cloudera Management Service**, select **Start**, and wait for the management service to start up correctly.
+2. In the Cloudera Manager, select the drop-down menu for the **Cloudera Management Service**, select **Start**, wait for the management service to start up correctly, and then select **Close**.
 
     ![The Cloudera Management Service menu. The user has selected **Start**.](../Images/0-Start-Cloudera-Manager.png)
 
-1. Select the drop-down menu for the **Cluster 1** cluster, and wait for the various services (Zookeeper, HDFS, Kafka, HBase, Yarn, Spark, and Hive) to start.
+3. Select the drop-down menu for the **Cluster 1** cluster, select **Start**, wait for the various services (Zookeeper, HDFS, Kafka, HBase, Yarn, Spark, and Hive) to start, and then select **Close**.
 
     ![The Cluster menu. The user has selected **Start**.](../Images/0-Start-Cloudera-Services.png)
 
-1. Verify that all services are shown as running correctly.
+4. Verify that all services are shown as running correctly.
 
     ---
 
