@@ -3,9 +3,6 @@ NEW
 ---
 
 Install Tez
-Patch APIServer
-Patch WebServer
-
 /opt/mapr/server/configure.sh -R
  
 ---

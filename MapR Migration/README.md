@@ -2,7 +2,7 @@
 
 In this lab, you'll learn how to migrate some common workloads running on a MapR cluster to HDInsight 4.0.
 
-Before starting this lab, [read the introduction and perform the setup steps](0-Introduction.md).
+Before starting this lab, [read the introduction and perform the setup steps](Instructions/0-Introduction.md).
 
 This lab contains four exercises showing how to:
 

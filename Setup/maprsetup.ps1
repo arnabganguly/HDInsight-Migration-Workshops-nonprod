@@ -226,16 +226,16 @@ $dataDisk = Get-AzDisk `
     -ResourceGroupName $resourceGroupName `
     -DiskName $dataDiskName
 
-$VirtualMachine = Set-AzVMOSDisk `
-    -VM $VirtualMachine `
-    -ManagedDiskId $osDisk.Id `
-    -CreateOption Attach -Linux
-    
 $VirtualMachine = Add-AzVMDataDisk `
     -VM $VirtualMachine `
     -ManagedDiskId $dataDisk.Id `
     -CreateOption Attach `
     -Lun 0
+
+$VirtualMachine = Set-AzVMOSDisk `
+    -VM $VirtualMachine `
+    -ManagedDiskId $osDisk.Id `
+    -CreateOption Attach -Linux
 
 # Create a public IP for the VM
 $publicIp = New-AzPublicIpAddress `
