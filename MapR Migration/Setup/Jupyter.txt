@@ -10,6 +10,8 @@ sudo pip3 install jupyter
 sudo pip3 install sparksql-magic
 #sudo pip3 install sparkmagic
 sudo pip3 install matplotlib
+sudo pip3 install nbconvert
+sudo pip3 install pandas
 
 sudo jupyter nbextension enable --py --sys-prefix widgetsnbextension
 # sudo jupyter serverextension enable --py sparkmagic

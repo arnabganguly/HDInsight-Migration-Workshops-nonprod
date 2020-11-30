@@ -72,7 +72,7 @@ Perform the following tasks:
     ![The Cloud Shell editor. The user has opened the **maprsetup.ps1** script.](../Images/0-EditFile.png)
 
 
-1. Press **CTRL-S** to save the file, and then press **CTRL+Q** to leave the editor.
+1. Press **CTRL-S** to save the file, and then press **CTRL-Q** to leave the editor.
 
 1. Run the script with the following command:
 
@@ -95,7 +95,7 @@ Perform the following tasks:
     ---
 
     ```PowerShell
-    ssh azureuser<ip address>
+    ssh azureuser@<ip address>
     ```
 
 1. At the *bash* prompt, run the following command to change the password for the **azureuser** account. Provide a password of your own choosing.
@@ -112,7 +112,7 @@ Perform the following tasks:
 
 1. In the Azure portal, close the PowerShell pane.
 
-1. On the desktop, open a Web browser, and navigate to the URL https://<ip-address>:9443, where *\<ip-address\>* is the IP address of the virtual machine you noted earlier. You should see the MapR sign in page.
+1. On the desktop, open a Web browser, and navigate to the URL https://\<ip-address\>:9443, where *\<ip-address\>* is the IP address of the virtual machine you noted earlier. You should see the MapR sign in page.
 
     ---
 
@@ -125,7 +125,7 @@ Perform the following tasks:
 
 1. Sign in with the username **mapr** with password **Pa55w.rdDemo**.
 
-1. on the **Installer**, select **Startup**.
+1. On the **Installer**, select **Startup**.
 
     ![The MapR **Installer** page. The user has selected **Startup**.](../Images/0-Mapr-Installer.png)
 

@@ -262,7 +262,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
 
 1. On the **Create SQL Database** page, select **Create**, and wait while the database and server are created.
 
-1. On the Azure Home page, under **Recent resources**, select **hivedb*9999***
+1. On the Azure Home page, under **Recent resources**, select **hivedb*9999***.
 
 1. On the **hivedb*9999*** page, select **Set server firewall**.
 
@@ -380,12 +380,12 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     10.3.0.14 wn4-llapcl
     ```
 
-1. Run the **ifconfig** command, and make a note of the **inet addr** field for the **eth0** device. In the example shown below, the **inet addr** is 10.1.0.4.
+1. Run the **ifconfig** command, and make a note of the **inet addr** field for the **eth0** device. In the example shown below, the **inet addr** is 10.20.0.4.
 
     ```text
     root@onprem:~/apps/spark# ifconfig
     eth0    Link encap:Ethernet  HWaddr 00:0d:3a:98:f9:70
-            inet addr:10.1.0.4  Bcast:10.1.0.255  Mask:255.255.255.0
+            inet addr:10.20.0.4  Bcast:10.1.0.255  Mask:255.255.255.0
             inet6 addr: fe80::20d:3aff:fe98:f970/64 Scope:Link
             UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
             RX packets:45434 errors:0 dropped:15 overruns:0 frame:0
@@ -418,7 +418,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     sudo bash
     ```
 
-1. Edit the file **/etc/hosts**, and add an entry for the MapR virtual machine. You noted the IP address of the MapR virtual machine earlier. The virtual machine has the name **onprem**, with the FQDN of **onprem.internal.cloudapp.net**. The file below shows an example, using the IP address 10.1.0.4:
+1. Edit the file **/etc/hosts**, and add an entry for the MapR virtual machine. You noted the IP address of the MapR virtual machine earlier. The virtual machine has the name **onprem**, with the FQDN of **onprem.internal.cloudapp.net**. The file below shows an example, using the IP address 10.20.0.4:
 
     ```text
     127.0.0.1 localhost
@@ -433,7 +433,7 @@ In this task, you'll create an HDInsight LLAP cluster for running Hive. You'll r
     10.3.0.16 hn0-llapcl.kaetua2hhycevkq3hkawfmrwjh.bx.internal.cloudapp.net hn0-llapcl hn0-llapcl.kaetua2hhycevkq3hkawfmrwjh.bx.internal.cloudapp.net.
     ...
     # MapR virtual machine
-    10.1.0.4 onprem.internal.cloudapp.net onprem
+    10.20.0.4 onprem.internal.cloudapp.net onprem
     ```
 
 1. Run the following command to quit the root shell and return to the sshuser shell.
@@ -475,15 +475,15 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
 
 1. In the **Confirmation** dialog box, select **SAVE**. 
 
-1. In the **Save Confirmation** dialog box, select **OK**.
-
 1. In the **Configurations** dialog box, select **PROCEED ANYWAY**.
+
+1. In the **Save Confirmation** dialog box, select **OK**.
 
 1. In the **Save Configuration Changes** dialog box, select **OK**.
 
 1. Select **RESTART**, and then select **Restart All Affected**.
 
-1. In the **Confirmations** dialog box, select **CONFIRM RESTART ALL**, and wait for the services to restart before continuing.
+1. In the **Confirmation** dialog box, select **CONFIRM RESTART ALL**, and wait for the services to restart before continuing.
 
 ## Task 3: Copy data from the MapR cluster to the HDInsight LLAP cluster
 

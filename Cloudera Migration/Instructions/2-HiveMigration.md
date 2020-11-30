@@ -480,15 +480,15 @@ By default, the Hive LLAP server is configured to enforce *strict* mode for mana
 
 1. In the **Confirmation** dialog box, select **SAVE**. 
 
-1. In the **Save Confirmation** dialog box, select **OK**.
-
 1. In the **Configurations** dialog box, select **PROCEED ANYWAY**.
+
+1. In the **Save Confirmation** dialog box, select **OK**.
 
 1. In the **Save Configuration Changes** dialog box, select **OK**.
 
 1. Select **RESTART**, and then select **Restart All Affected**.
 
-1. In the **Confirmations** dialog box, select **CONFIRM RESTART ALL**, and wait for the services to restart before continuing.
+1. In the **Confirmation** dialog box, select **CONFIRM RESTART ALL**, and wait for the services to restart before continuing.
 
 ## Task 3: Copy data from the Cloudera cluster to the HDInsight LLAP cluster
 

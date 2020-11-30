@@ -20,6 +20,9 @@ edit /opt/mapr/kafka/kafka-1.1.1/config/server.properties
 
 delete.topic.enable=true
 
+Change:
+zookeeper.connect=localhost:5181
+
 ---
 
 create /etc/systemd/system/kafka.service
@@ -61,12 +64,6 @@ export SPARK_HOME=/opt/mapr/spark/spark-2.4.4
 export PYSPARK_DRIVER_PYTHON="jupyter"
 export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
 export PATH=${PATH}:${SPARK_HOME}/bin
----
-
-edit $KAFKA_HOME/config/server.properties
-
-zookeeper.connect=localhost:5181
-
 ---
 
 sudo -u mapr bash
