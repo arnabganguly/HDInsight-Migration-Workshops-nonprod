@@ -29,8 +29,6 @@ jupyter notebook --generate-config
 sudo chown azureuser:azureuser ~/.local/share
 sudo chown azureuser:azureuser ~/.local/share/jupyter
 
-jupyter notebook --generate-config
-# Copy config files from jupyterconfig folder to .jupyter to enable remote access
 
 export PYSPARK_DRIVER_PYTHON="jupyter"
 export PYSPARK_DRIVER_PYTHON_OPTS="notebook"

@@ -23,10 +23,7 @@ $virtualMachineSize = 'Standard_E8-4s_v4'
 $virtualNetworkName = 'maprvmvnet'
 $subnetName = 'maprsubnet'
 
-#VNet prefix for the VM
-$vnetprefix = '10.1.0.0'
-
-#Network security group name for the VNet
+# Network security group name for the VNet
 $nsgName = 'maprnsg'
 
 # **DON'T CHANGE ANYTHING BELOW THIS POINT**
@@ -34,8 +31,11 @@ $nsgName = 'maprnsg'
 $targetOS = 'Linux'
 $osDiskName = 'maprosdisk'
 $dataDiskName = 'maprdatadisk'
-$osVhdSizeBytes = 68719477248
+$osVhdSizeBytes = 137438953984
 $dataVhdSizeBytes = 137438953984
+
+# VNet prefix for the VM
+$vnetprefix = '10.20.0.0'
 
 # Create a resource group for holding the virtual machine
 Select-AzSubscription -SubscriptionId $SubscriptionId
@@ -55,10 +55,10 @@ $targetOSDisk = New-AzDisk -ResourceGroupName $resourceGroupName `
 
 $targetOSDiskSas = Grant-AzDiskAccess -ResourceGroupName $resourceGroupName `
     -DiskName $osDiskName `
-    -DurationInSecond 86400 -Access 'Write'
+    -DurationInSecond 864000 -Access 'Write'
 
 # Copy the contents of the pre-created OS disk to the managed OS disk
-azcopy copy $sourceOSDiskSAS $targetOSDiskSas.AccessSAS `
+.\azcopy copy $sourceOSDiskSAS $targetOSDiskSas.AccessSAS `
     --blob-type PageBlob
 
 Revoke-AzDiskAccess -ResourceGroupName $resourceGroupName `
@@ -78,9 +78,9 @@ $targetOSDisk = New-AzDisk -ResourceGroupName $resourceGroupName `
 
 $targetDataDiskSas = Grant-AzDiskAccess -ResourceGroupName $resourceGroupName `
     -DiskName $dataDiskName `
-    -DurationInSecond 86400 -Access 'Write'
+    -DurationInSecond 864000 -Access 'Write'
 
-azcopy copy $sourceDataDiskSAS $targetDataDiskSas.AccessSAS `
+.\azcopy copy $sourceDataDiskSAS $targetDataDiskSas.AccessSAS `
     --blob-type PageBlob
 
 Revoke-AzDiskAccess -ResourceGroupName $resourceGroupName `
@@ -194,6 +194,26 @@ $nsg | Add-AzNetworkSecurityRuleConfig `
     -DestinationAddressPrefix * `
     -DestinationPortRange 9092 | Set-AzNetworkSecurityGroup
 
+$nsg | Add-AzNetworkSecurityRuleConfig `
+    -Name 'HBase2' `
+    -Access Allow `
+    -Protocol Tcp `
+    -Direction Inbound -Priority 430 `
+    -SourceAddressPrefix Internet `
+    -SourcePortRange * `
+    -DestinationAddressPrefix * `
+    -DestinationPortRange 16000 | Set-AzNetworkSecurityGroup
+
+$nsg | Add-AzNetworkSecurityRuleConfig `
+    -Name 'HBase3' `
+    -Access Allow `
+    -Protocol Tcp `
+    -Direction Inbound -Priority 440 `
+    -SourceAddressPrefix Internet `
+    -SourcePortRange * `
+    -DestinationAddressPrefix * `
+    -DestinationPortRange 16020 | Set-AzNetworkSecurityGroup
+
 # Create a subnet for the VM, and associate the NSG with the subnet
 $subnetConfig = Add-AzVirtualNetworkSubnetConfig `
     -Name $subnetName `
@@ -222,6 +242,12 @@ $osDisk = Get-AzDisk `
     -ResourceGroupName $resourceGroupName `
     -DiskName $osDiskName
 
+$VirtualMachine = Set-AzVMOSDisk `
+    -VM $VirtualMachine `
+    -ManagedDiskId $osDisk.Id `
+    -CreateOption Attach -Linux
+
+
 $dataDisk = Get-AzDisk `
     -ResourceGroupName $resourceGroupName `
     -DiskName $dataDiskName
@@ -231,11 +257,6 @@ $VirtualMachine = Add-AzVMDataDisk `
     -ManagedDiskId $dataDisk.Id `
     -CreateOption Attach `
     -Lun 0
-
-$VirtualMachine = Set-AzVMOSDisk `
-    -VM $VirtualMachine `
-    -ManagedDiskId $osDisk.Id `
-    -CreateOption Attach -Linux
 
 # Create a public IP for the VM
 $publicIp = New-AzPublicIpAddress `

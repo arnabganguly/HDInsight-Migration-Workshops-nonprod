@@ -80,7 +80,7 @@ Perform the following tasks:
     .\maprsetup.ps1
     ```
 
-    As the script runs, you will see various messages when the resources are created. The script will take about 5 minutes to complete. When it has finished, it will display the IP address of the new virtual machine. Make a note of this address.
+    As the script runs, you will see various messages when the resources are created. The script will take about 10 minutes to complete. When it has finished, it will display the IP address of the new virtual machine. Make a note of this address.
 
     ![The Azure Cloud Shell in the Azure portal. The script has completed. The IP address of the new virtual machine is highlighted.](../Images/0-ScriptCompleted.png)
 
@@ -90,7 +90,7 @@ Perform the following tasks:
 
     **NOTE:** 
     
-    You may need to wait for a minute while the virtual machine services start before continuing
+    You may need to wait for a couple of minutes while the virtual machine services start before continuing
 
     ---
 
@@ -111,29 +111,3 @@ Perform the following tasks:
     ```
 
 1. In the Azure portal, close the PowerShell pane.
-
-1. On the desktop, open a Web browser, and navigate to the URL https://\<ip-address\>:9443, where *\<ip-address\>* is the IP address of the virtual machine you noted earlier. You should see the MapR sign in page.
-
-    ---
-
-    **NOTE:** 
-    You may be warned by the browser that the web site is unsafe. This is because the SSL certificate validates the connection to the server by name (onprem.internal.cloudapp.net) but you are accessing it using its IP address. You can ignore this warning.
-    
-    ---
-    
-    ![The MapR sign in page in the web browser.](../Images/0-MapRLogin.png)
-
-1. Sign in with the username **mapr** with password **Pa55w.rdDemo**.
-
-1. On the **Installer**, select **Startup**.
-
-    ![The MapR **Installer** page. The user has selected **Startup**.](../Images/0-Mapr-Installer.png)
-
-
-1. On the **Authentication** page, set **SSH Username** to **azureuser**, provide the password you just set for this user in the **SSH Password** and **Verify SSH Password** boxes, and then select **Startup**.
-
-    ![The MapR **Authentication** page. The user is starting MapR as **azureuser**.](../Images/0-Mapr-Authentication.png)
-
-1. Wait while the MapR services are started. When startup is complete, you'll be returned to the **Installer** page.
-
-    ![The MapR **Installer** page. The MapR services have started successfully.](../Images/0-MapR-Services-Running.png)
